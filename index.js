@@ -78,17 +78,17 @@ const db = {
 
 const rootValue = {
   hello: () => db.hello,
-  upsertHello: ({hello}) => {
+  upsertHello: ({ hello }) => {
     previous = db.hello
     db.hello = hello
     return previous
   },
-  Artworks: ({ids}) => {
+  Artworks: ({ ids }) => {
     const artworks = ids.map(id => db.artworks.get(parseInt(id)))
     return artworks
   },
-  upsertArtworks: ({artworks}) => {
-    const previous = artworks.map(({id}) => db.artworks.get(id))
+  upsertArtworks: ({ artworks }) => {
+    const previous = artworks.map(({ id }) => db.artworks.get(id))
     artworks.forEach(artwork => db.artworks.set(artwork.id, artwork))
     return previous
   }
@@ -96,7 +96,7 @@ const rootValue = {
 
 const graphiql = true
 
-app.use(mount('/graphql', graphqlHTTP({graphiql, schema, rootValue})))
+app.use(mount('/graphql', graphqlHTTP({ graphiql, schema, rootValue })))
 
 app.listen(4000, () => {
   console.log('Running a GraphQL API server at localhost:4000/graphql')

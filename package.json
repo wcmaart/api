@@ -4,7 +4,8 @@
   "description": "[![DOI](https://zenodo.org/badge/82729276.svg)](https://zenodo.org/badge/latestdoi/82729276)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run-script format",
+    "format": "prettier-standard index.js"
   },
   "repository": {
     "type": "git",
