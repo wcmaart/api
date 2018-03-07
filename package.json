@@ -1,0 +1,26 @@
+{
+  "name": "collection",
+  "version": "1.0.0",
+  "description": "[![DOI](https://zenodo.org/badge/82729276.svg)](https://zenodo.org/badge/latestdoi/82729276)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jedahan/collection.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jedahan/collection/issues"
+  },
+  "homepage": "https://github.com/jedahan/collection#readme",
+  "dependencies": {
+    "graphql": "^0.13.1",
+    "koa": "^2.5.0",
+    "koa-graphql": "^0.7.5",
+    "koa-mount": "^3.0.0",
+    "prettier-standard": "^8.0.0"
+  }
+}
