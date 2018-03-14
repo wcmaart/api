@@ -2,6 +2,8 @@ const Koa = require('koa')
 const mount = require('koa-mount')
 const graphqlHTTP = require('koa-graphql')
 
+const fetch = require('node-fetch')
+
 const app = new Koa()
 
 const { buildSchema } = require('graphql')
@@ -10,10 +12,39 @@ const schema = buildSchema(`
   type Query {
     hello: String,
     Artworks(ids: [ID!]): [Artwork]
+    getObject(id: ID!): Object
   }
   type Mutation {
     upsertHello(hello: String): String,
     upsertArtworks(artworks: [ArtworkInput!]): [Artwork]
+  }
+  type Object {
+    primaryMaker: Label,
+    primaryMedia: Value,
+    displayDate: Label,
+    invno: Label,
+    id: IntLabel,
+    title: Label,
+    classification: Label,
+    creditline: Label,
+    dimensions: Label,
+    medium: Label,
+    people: ArrayLabel
+  }
+  type Label {
+    label: String,
+    value: String
+  }
+  type IntLabel {
+    label: String,
+    value: Int
+  }
+  type ArrayLabel {
+    label: String,
+    value: [String]
+  }
+  type Value {
+    value: String
   }
   input ArtworkInput {
     id: Int,
@@ -71,9 +102,20 @@ const schema = buildSchema(`
   }
 `)
 
+const emuseum = {
+  getObject: async (id) => {
+    const { EMUSEUM_KEY } = process.env
+    const uri = `http://egallery.williams.edu/objects/${id}/json?key=${EMUSEUM_KEY}`
+    return fetch(uri).then(res => res.json())
+  }
+}
+
 const db = {
   hello: `world!`,
-  artworks: new Map()
+  artworks: new Map(),
+  objects: {
+    getFromEmuseum: emuseum.getObject
+  }
 }
 
 const rootValue = {
@@ -82,6 +124,11 @@ const rootValue = {
     previous = db.hello
     db.hello = hello
     return previous
+  },
+  getObject: async ({ id }) => {
+    const object = await db.objects.getFromEmuseum(id)
+    let thing = object.object
+    return thing
   },
   Artworks: ({ ids }) => {
     const artworks = ids.map(id => db.artworks.get(parseInt(id)))

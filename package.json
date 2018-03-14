@@ -4,8 +4,7 @@
   "description": "[![DOI](https://zenodo.org/badge/82729276.svg)](https://zenodo.org/badge/latestdoi/82729276)",
   "main": "graphql.js",
   "scripts": {
-    "start": "npm-run-all -p graphql dev",
-    "dev": "next",
+    "start": "npm-run-all -p graphql",
     "graphql": "node graphql.js",
     "test": "npm run-script format",
     "format": "prettier-standard graphql.js"
@@ -25,7 +24,7 @@
     "koa": "^2.5.0",
     "koa-graphql": "^0.7.5",
     "koa-mount": "^3.0.0",
-    "next": "^5.0.0",
+    "node-fetch": "^2.1.1",
     "npm-run-all": "^4.1.2",
     "prettier-standard": "^8.0.0",
     "react": "^16.2.0",
