@@ -8,7 +8,7 @@ You can query the artworks endpoints no problem
 
 To access the getObject endpoint, you will need to export the api key to `EMUSEUM_API`
 
-k### **Give attribution to WCMA**
+### **Give attribution to WCMA**
 
 Our dataset is being offered under [CC0 1.0 Universal license](https://creativecommons.org/publicdomain/zero/1.0/).
 
