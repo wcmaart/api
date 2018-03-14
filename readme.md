@@ -10,7 +10,7 @@ First, clonet this repo and its submodules
 
     git clone --recursive https://github.com/wcmaart/api
 
-To access the getObject endpoint, you will need to export the api key to `EMUSEUM_API`
+To access the getObject endpoint, you will need to export the api key to `EMUSEUM_KEY`
 
     npm install
     npm start
