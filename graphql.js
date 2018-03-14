@@ -19,6 +19,7 @@ const schema = buildSchema(`
   }
   type Mutation {
     upsertHello(hello: String): String,
+    upsertArtworks(artworks: [ArtworkInput!]): [Artwork],
     upsertLocals(locals: [ArtworkInput!]): [Artwork]
   }
   type Object {
@@ -113,7 +114,9 @@ const emuseum = {
   }
 }
 
-const wcmaCollection = fs.readFileSync('data/wcma-collection-fixed.csv', {encoding: 'UTF8'})
+const startDate = new Date()
+const csvPath = 'data/wcma-collection-fixed.csv'
+const wcmaCollection = fs.readFileSync(csvPath, {encoding: 'UTF8'})
 const csv = CSV.parse(wcmaCollection, {header: true})
 
 const db = {
@@ -124,6 +127,9 @@ const db = {
     getFromEmuseum: emuseum.getObject
   }
 }
+
+const time = (new Date()) - startDate
+console.log(`Imported ${db.artworks.size} artworks from ${csvPath} in ${time}ms`)
 
 const rootValue = {
   hello: () => db.hello,
@@ -141,6 +147,14 @@ const rootValue = {
     const artworks = ids.map(id => db.artworks.get(parseInt(id)))
     return artworks
   },
+  upsertArtworks: ({ artworks }) => {
+    const previous = artworks.map(({ id }) => db.artworks.get(id))
+    artworks.forEach(artwork => db.artworks.set(artwork.id, artwork))
+    const values = db.artworks.values()
+    const artworksString = CSV.encode(Array.from(values), {header: true})
+    fs.writeFile(csvPath, artworksString, {encoding: 'UTF8'})
+    return previous
+  },
   Locals: ({ ids }) => {
     const locals = ids.map(id => db.locals.get(parseInt(id)))
     return locals
@@ -151,8 +165,6 @@ const rootValue = {
     return previous
   }
 }
-
-console.dir(db.artworks)
 
 const graphiql = true
 
