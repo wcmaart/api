@@ -4,12 +4,21 @@
 
 The collection data is from [*Collection*](https://github.com/wcmaart/collection) and is CC0 licensed, see that repository for more details
 
-To access the getObject endpoint, you will need to export the api key to `EMUSEUM_API`
+# Getting started
 
+First, clonet this repo and its submodules
+
+    git clone --recursive https://github.com/wcmaart/api
+
+To access the getObject endpoint, you will need to export the api key to `EMUSEUM_API`
 
     npm install
     npm start
     open http://localhost:4000/graphql
+
+You will need to fixup the wcma-collection.csv. I use [xsv](https://github.com/burntsushi/xsv):
+
+    csv fixlengths data/wcma-collection.csv > data/wcma-collection-fixed.csv
 
 # Technologies
 
@@ -17,15 +26,36 @@ Right now this is a graphql endpoint, that can
 
 * query the emuseum objects directly
 
-    curl /
+    {
+        getObject(id:16677) {
+            title {
+                value
+            }
+            primaryMedia {
+                value
+            }
+        }
+    }
 
-* query artworks indirectly
+* query artworks from the csv directly
 
-    curl /
+    {
+	    Artworks(ids:[4163]) {
+  	        title
+	    }
+    }
 
-* mutate artworks directly
+* mutate the in-memory database directly
 
-    curl
+    mutation {
+        upsertHello(hello:"friend")
+    }
+
+* query the in-memory database directly
+
+    {
+        hello
+    }
 
 # Philosophy
 

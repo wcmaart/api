@@ -1,8 +1,10 @@
 const Koa = require('koa')
 const mount = require('koa-mount')
 const graphqlHTTP = require('koa-graphql')
+const fs = require('fs')
 
 const fetch = require('node-fetch')
+const CSV = require('comma-separated-values')
 
 const app = new Koa()
 
@@ -11,12 +13,13 @@ const { buildSchema } = require('graphql')
 const schema = buildSchema(`
   type Query {
     hello: String,
+    Locals(ids: [ID!]): [Artwork]
     Artworks(ids: [ID!]): [Artwork]
     getObject(id: ID!): Object
   }
   type Mutation {
     upsertHello(hello: String): String,
-    upsertArtworks(artworks: [ArtworkInput!]): [Artwork]
+    upsertLocals(locals: [ArtworkInput!]): [Artwork]
   }
   type Object {
     primaryMaker: Label,
@@ -103,16 +106,20 @@ const schema = buildSchema(`
 `)
 
 const emuseum = {
-  getObject: async (id) => {
+  getObject: async id => {
     const { EMUSEUM_KEY } = process.env
     const uri = `http://egallery.williams.edu/objects/${id}/json?key=${EMUSEUM_KEY}`
     return fetch(uri).then(res => res.json())
   }
 }
 
+const wcmaCollection = fs.readFileSync('data/wcma-collection-fixed.csv', {encoding: 'UTF8'})
+const csv = CSV.parse(wcmaCollection, {header: true})
+
 const db = {
   hello: `world!`,
-  artworks: new Map(),
+  locals: new Map(),
+  artworks: new Map(csv.map(object => [object.id, object])),
   objects: {
     getFromEmuseum: emuseum.getObject
   }
@@ -134,12 +141,18 @@ const rootValue = {
     const artworks = ids.map(id => db.artworks.get(parseInt(id)))
     return artworks
   },
-  upsertArtworks: ({ artworks }) => {
-    const previous = artworks.map(({ id }) => db.artworks.get(id))
-    artworks.forEach(artwork => db.artworks.set(artwork.id, artwork))
+  Locals: ({ ids }) => {
+    const locals = ids.map(id => db.locals.get(parseInt(id)))
+    return locals
+  },
+  upsertLocal: ({ locals }) => {
+    const previous = locals.map(({ id }) => db.locals.get(id))
+    locals.forEach(artwork => db.locals.set(local.id, local))
     return previous
   }
 }
+
+console.dir(db.artworks)
 
 const graphiql = true
 
