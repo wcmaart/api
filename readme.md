@@ -16,10 +16,6 @@ To access the getObject endpoint, you will need to export the api key to `EMUSEU
     npm start
     open http://localhost:4000/graphql
 
-You will need to fixup the wcma-collection.csv. I use [xsv](https://github.com/burntsushi/xsv):
-
-    csv fixlengths data/wcma-collection.csv > data/wcma-collection-fixed.csv
-
 # Technologies
 
 Right now this is a graphql endpoint, that can
