@@ -19,9 +19,9 @@ const emuseum = {
 }
 
 const startDate = new Date()
-const csvPath = 'data/wcma-collection-fixed.csv'
-const wcmaCollection = fs.readFileSync(csvPath, {encoding: 'latin1'})
-const csv = CSV.parse(wcmaCollection, {header: true, })
+const csvPath = 'data/wcma-collection.csv'
+const wcmaCollection = fs.readFileSync(csvPath, {encoding: 'utf8'})
+const csv = CSV.parse(wcmaCollection, {header: true, lineDelimiter: '\r'})
 
 const db = {
   hello: `world!`,
