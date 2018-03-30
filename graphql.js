@@ -74,6 +74,8 @@ const graphiql = true
 
 app.use(mount('/graphql', graphqlHTTP({ graphiql, schema, rootValue })))
 
-app.listen(4000, () => {
-  console.log('Running a GraphQL API server at localhost:4000/graphql')
+const { GRAPHQL_HOST = 'localhost', GRAPHQL_PORT = 4000 } = process.env
+
+app.listen(GRAPHQL_PORT, GRAPHQL_HOST, () => {
+    console.log(`GraphQL listening on ${GRAPHQL_HOST}:${GRAPHQL_PORT}/graphql`)
 })
