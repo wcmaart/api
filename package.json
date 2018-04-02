@@ -4,10 +4,13 @@
   "description": "[![DOI](https://zenodo.org/badge/82729276.svg)](https://zenodo.org/badge/latestdoi/82729276)",
   "main": "graphql.js",
   "scripts": {
-    "start": "npm-run-all -p graphql",
+    "dev": "next",
+    "build": "next build",
+    "next": "next start",
     "graphql": "node graphql.js",
+    "start": "npm-run-all -p graphql next",
     "test": "npm run-script format",
-    "format": "prettier-standard graphql.js"
+    "format": "prettier-standard graphql.js src/*js components/*js"
   },
   "repository": {
     "type": "git",
@@ -21,14 +24,15 @@
   "homepage": "https://github.com/jedahan/collection#readme",
   "dependencies": {
     "comma-separated-values": "^3.6.4",
-    "graphql": "^0.13.1",
+    "graphql": "^0.13.2",
     "koa": "^2.5.0",
     "koa-graphql": "^0.7.5",
     "koa-mount": "^3.0.0",
-    "node-fetch": "^2.1.1",
+    "next": "^5.1.0",
+    "node-fetch": "^2.1.2",
     "npm-run-all": "^4.1.2",
     "prettier-standard": "^8.0.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0"
   }
 }

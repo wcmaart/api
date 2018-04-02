@@ -10,6 +10,21 @@ const app = new Koa()
 
 const schema = require('./src/schema.js')
 
+const csvPathToMap = (csvPath = 'data/wcma-collection.csv') => {
+  const wcmaCollection = fs.readFileSync(csvPath, { encoding: 'utf8' })
+  const csv = CSV.parse(wcmaCollection, { header: true, lineDelimiter: '\r' })
+  return new Map(csv.map(object => [object.id, object]))
+}
+
+const timed = fn => (...args) => {
+  const start = new Date()
+  const call = `${fn.name}(${args.join(', ')})`
+  console.log(`  ${call} started at ${start}`)
+  fn(...args)
+  const duration = new Date() - start
+  console.log(`  ${call} took ${duration}ms`)
+}
+
 const emuseum = {
   getObject: async id => {
     const { EMUSEUM_KEY } = process.env
@@ -18,22 +33,14 @@ const emuseum = {
   }
 }
 
-const startDate = new Date()
-const csvPath = 'data/wcma-collection.csv'
-const wcmaCollection = fs.readFileSync(csvPath, {encoding: 'utf8'})
-const csv = CSV.parse(wcmaCollection, {header: true, lineDelimiter: '\r'})
-
 const db = {
   hello: `world!`,
   locals: new Map(),
-  artworks: new Map(csv.map(object => [object.id, object])),
+  artworks: timed(csvPathToMap)(),
   objects: {
     getFromEmuseum: emuseum.getObject
   }
 }
-
-const time = (new Date()) - startDate
-console.log(`Imported ${db.artworks.size} artworks from ${csvPath} in ${time}ms`)
 
 const rootValue = {
   hello: () => db.hello,
@@ -55,8 +62,8 @@ const rootValue = {
     const previous = artworks.map(({ id }) => db.artworks.get(id))
     artworks.forEach(artwork => db.artworks.set(artwork.id, artwork))
     const values = db.artworks.values()
-    const artworksString = CSV.encode(Array.from(values), {header: true})
-    fs.writeFile(csvPath, artworksString, {encoding: 'UTF8'})
+    const artworksString = CSV.encode(Array.from(values), { header: true })
+    fs.writeFile(csvPath, artworksString, { encoding: 'UTF8' })
     return previous
   },
   Locals: ({ ids }) => {
