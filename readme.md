@@ -6,7 +6,7 @@ The collection data is from [*Collection*](https://github.com/wcmaart/collection
 
 # Getting started
 
-First, clonet this repo and its submodules
+First, clone this repo and its submodules
 
     git clone --recursive https://github.com/wcmaart/api
 
@@ -20,7 +20,7 @@ To access the getObject endpoint, you will need to export the api key to `EMUSEU
 
 Right now this is a graphql endpoint, that can
 
-* query the emuseum objects directly
+* query the emuseum api objects
 
     {
         getObject(id:16677) {
@@ -33,21 +33,33 @@ Right now this is a graphql endpoint, that can
         }
     }
 
-* query artworks from the csv directly
+* query artworks from the csv
 
     {
-	    Artworks(ids:[4163]) {
-  	        title
-	    }
+      Artworks(ids:[4163]) {
+        title
+      }
     }
 
-* mutate the in-memory database directly
+* mutate the csv
+
+    mutation {
+      upsertArtworks(artworks:[{
+        id:123,
+        title:"Artists must suffer, that's why its called PAINting"
+      }]) {
+        id,
+        title
+      }
+    }
+
+* mutate the in-memory database
 
     mutation {
         upsertHello(hello:"friend")
     }
 
-* query the in-memory database directly
+* query the in-memory database
 
     {
         hello

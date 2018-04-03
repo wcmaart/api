@@ -9,8 +9,9 @@ const CSV = require('comma-separated-values')
 const app = new Koa()
 
 const schema = require('./src/schema.js')
+const csvPath = 'data/wcma-collection.csv'
 
-const csvPathToMap = (csvPath = 'data/wcma-collection.csv') => {
+const csvToMap = () => {
   const wcmaCollection = fs.readFileSync(csvPath, { encoding: 'utf8' })
   const csv = CSV.parse(wcmaCollection, { header: true, lineDelimiter: '\r' })
   return new Map(csv.map(object => [object.id, object]))
@@ -20,14 +21,16 @@ const timed = fn => (...args) => {
   const start = new Date()
   const call = `${fn.name}(${args.join(', ')})`
   console.log(`  ${call} started at ${start}`)
-  fn(...args)
+  let response = fn(...args)
   const duration = new Date() - start
   console.log(`  ${call} took ${duration}ms`)
+  return response
 }
 
 const emuseum = {
   getObject: async id => {
     const { EMUSEUM_KEY } = process.env
+    if (!EMUSEUM_KEY) throw new Error('Missing EMUSEUM_KEY, please export it')
     const uri = `http://egallery.williams.edu/objects/${id}/json?key=${EMUSEUM_KEY}`
     return fetch(uri).then(res => res.json())
   }
@@ -36,7 +39,7 @@ const emuseum = {
 const db = {
   hello: `world!`,
   locals: new Map(),
-  artworks: timed(csvPathToMap)(),
+  artworks: timed(csvToMap)(),
   objects: {
     getFromEmuseum: emuseum.getObject
   }
@@ -60,10 +63,17 @@ const rootValue = {
   },
   upsertArtworks: ({ artworks }) => {
     const previous = artworks.map(({ id }) => db.artworks.get(id))
-    artworks.forEach(artwork => db.artworks.set(artwork.id, artwork))
-    const values = db.artworks.values()
-    const artworksString = CSV.encode(Array.from(values), { header: true })
-    fs.writeFile(csvPath, artworksString, { encoding: 'UTF8' })
+    const newArtworks = new Map(db.artworks)
+    artworks.forEach(artwork => newArtworks.set(artwork.id, artwork))
+    const artworksString = CSV.encode(Array.from(newArtworks.values()), { header: true })
+    try {
+      fs.writeFileSync(csvPath, artworksString, { encoding: 'UTF8' })
+    } catch (err) {
+      console.error(err)
+      throw new Error(`Could not write to csv!`)
+    }
+
+    db.artworks = newArtworks
     return previous
   },
   Locals: ({ ids }) => {
@@ -79,10 +89,14 @@ const rootValue = {
 
 const graphiql = true
 
-app.use(mount('/graphql', graphqlHTTP({ graphiql, schema, rootValue })))
+app.use(mount('/graphql', graphqlHTTP(request => {
+  const start = Date.now()
+  const extensions = ({ document, variables, operationName, result }) => ({
+    duration: (new Date()) - start
+  })
+  return { graphiql, schema, rootValue, extensions }
+})))
 
-const { GRAPHQL_HOST = 'localhost', GRAPHQL_PORT = 4000 } = process.env
-
-app.listen(GRAPHQL_PORT, GRAPHQL_HOST, () => {
-    console.log(`GraphQL listening on ${GRAPHQL_HOST}:${GRAPHQL_PORT}/graphql`)
+app.listen(4000, () => {
+  console.log('Running a GraphQL API server at localhost:4000/graphql')
 })
