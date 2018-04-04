@@ -12,9 +12,11 @@ First, clone this repo and its submodules
 
 To access the getObject endpoint, you will need to export the api key to `EMUSEUM_KEY`
 
+```bash
     npm install
     npm start
     open http://localhost:4000/graphql
+```
 
 # Technologies
 
@@ -22,6 +24,7 @@ Right now this is a graphql endpoint, that can
 
 * query the emuseum api objects
 
+```graphql
     {
         getObject(id:16677) {
             title {
@@ -32,9 +35,11 @@ Right now this is a graphql endpoint, that can
             }
         }
     }
+```
 
 * query artworks from the csv
 
+```graphql
     {
       Artworks(ids:[4163]) {
         title
@@ -43,6 +48,7 @@ Right now this is a graphql endpoint, that can
 
 * mutate the csv
 
+```graphql
     mutation {
       upsertArtworks(artworks:[{
         id:123,
@@ -52,18 +58,23 @@ Right now this is a graphql endpoint, that can
         title
       }
     }
+```
 
 * mutate the in-memory database
 
+```graphql
     mutation {
         upsertHello(hello:"friend")
     }
+```
 
 * query the in-memory database
 
+```graphql
     {
         hello
     }
+```
 
 # Philosophy
 
