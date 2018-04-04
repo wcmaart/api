@@ -23,58 +23,59 @@ Right now this is a graphql endpoint, that can
 * query the emuseum api objects
 
 ```graphql
-    {
-        getObject(id:16677) {
-            title {
-                value
-            }
-            primaryMedia {
-                value
-            }
+{
+    getObject(id:16677) {
+        title {
+            value
+        }
+        primaryMedia {
+            value
         }
     }
+}
 ```
 
 * query artworks from the csv
 
 ```graphql
-    {
-      Artworks(ids:[4163]) {
-        title
-      }
-    }
+{
+  Artworks(ids:[4163]) {
+    title
+  }
+}
+```
 
 * mutate the csv
 
 ```graphql
-    mutation {
-      upsertArtworks(artworks:[{
-        id:123,
-        title:"Artists must suffer, that's why its called PAINting"
-      }]) {
-        id,
-        title
-      }
-    }
+mutation {
+  upsertArtworks(artworks:[{
+    id:123,
+    title:"Artists must suffer, that's why its called PAINting"
+  }]) {
+    id,
+    title
+  }
+}
 ```
 
 * mutate the in-memory database
 
 ```graphql
-    mutation {
-        upsertHello(hello:"friend")
-    }
+mutation {
+    upsertHello(hello:"friend")
+}
 ```
 
 * query the in-memory database
 
 ```graphql
-    {
-        hello
-    }
+{
+    hello
+}
 ```
 
 # Philosophy
 
-Examples are more humane than documentation
-The less technologies the better
+* Examples are more humane than documentation
+* The less technologies the better
