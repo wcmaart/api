@@ -1,16 +1,15 @@
 {
   "name": "collection",
   "version": "1.0.0",
-  "description": "[![DOI](https://zenodo.org/badge/82729276.svg)](https://zenodo.org/badge/latestdoi/82729276)",
-  "main": "graphql.js",
+  "main": "src/graphql.js",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "next": "next start",
-    "graphql": "node graphql.js",
+    "graphql": "node src/graphql.js",
     "start": "npm-run-all -p graphql next",
     "test": "npm run-script format",
-    "format": "prettier-standard graphql.js src/*js components/*js"
+    "format": "prettier-standard src/*js components/*js"
   },
   "repository": {
     "type": "git",
@@ -33,7 +32,7 @@
     "node-fetch": "^2.1.2",
     "npm-run-all": "^4.1.2",
     "prettier-standard": "^8.0.0",
-    "react": "^16.3.0",
-    "react-dom": "^16.3.0"
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1"
   }
 }

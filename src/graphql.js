@@ -66,7 +66,9 @@ const rootValue = {
     const previous = artworks.map(({ id }) => db.artworks.get(id))
     const newArtworks = new Map(db.artworks)
     artworks.forEach(artwork => newArtworks.set(artwork.id, artwork))
-    const artworksString = CSV.encode(Array.from(newArtworks.values()), { header: true })
+    const artworksString = CSV.encode(Array.from(newArtworks.values()), {
+      header: true
+    })
     try {
       fs.writeFileSync(csvPath, artworksString, { encoding: 'UTF8' })
     } catch (err) {
@@ -91,13 +93,18 @@ const rootValue = {
 const graphiql = true
 
 app.use(cors())
-app.use(mount('/graphql', graphqlHTTP(request => {
-  const start = Date.now()
-  const extensions = ({ document, variables, operationName, result }) => ({
-    duration: (new Date()) - start
-  })
-  return { graphiql, schema, rootValue, extensions }
-})))
+app.use(
+  mount(
+    '/graphql',
+    graphqlHTTP(request => {
+      const start = Date.now()
+      const extensions = ({ document, variables, operationName, result }) => ({
+        duration: new Date() - start
+      })
+      return { graphiql, schema, rootValue, extensions }
+    })
+  )
+)
 
 app.listen(4000, () => {
   console.log('Running a GraphQL API server at localhost:4000/graphql')
