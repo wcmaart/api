@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jedahan/collection#readme",
   "dependencies": {
+    "@koa/cors": "^2.2.1",
     "comma-separated-values": "^3.6.4",
     "graphql": "^0.13.2",
     "koa": "^2.5.0",

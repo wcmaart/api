@@ -1,5 +1,6 @@
 const Koa = require('koa')
 const mount = require('koa-mount')
+const cors = require('@koa/cors')
 const graphqlHTTP = require('koa-graphql')
 const fs = require('fs')
 
@@ -89,6 +90,7 @@ const rootValue = {
 
 const graphiql = true
 
+app.use(cors())
 app.use(mount('/graphql', graphqlHTTP(request => {
   const start = Date.now()
   const extensions = ({ document, variables, operationName, result }) => ({
