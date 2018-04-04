@@ -1,5 +1,3 @@
-[![DOI](https://zenodo.org/badge/82729276.svg)](https://zenodo.org/badge/latestdoi/82729276)
-
 # Williams College Museum of Art (WCMA) API
 
 The collection data is from [*Collection*](https://github.com/wcmaart/collection) and is CC0 licensed, see that repository for more details
