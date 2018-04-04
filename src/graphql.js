@@ -9,7 +9,7 @@ const CSV = require('comma-separated-values')
 
 const app = new Koa()
 
-const schema = require('./src/schema.js')
+const schema = require('./schema.js')
 const csvPath = 'data/wcma-collection.csv'
 
 const csvToMap = () => {
