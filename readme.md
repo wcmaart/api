@@ -12,6 +12,7 @@ To access the getObject endpoint, you will need to export the api key to `EMUSEU
 
 ```bash
     npm install
+    export EMUSEUM_KEY="youremuseumapikeyhere"
     npm start
     open http://localhost:4000/graphql
 ```
