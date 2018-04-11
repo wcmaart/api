@@ -25,14 +25,18 @@
     "@koa/cors": "^2.2.1",
     "comma-separated-values": "^3.6.4",
     "graphql": "^0.13.2",
+    "https-proxy-agent": "^2.2.1",
     "koa": "^2.5.0",
+    "koa-better-http-proxy": "^0.2.4",
     "koa-graphql": "^0.7.5",
     "koa-mount": "^3.0.0",
+    "koa-proxies": "^0.7.0",
     "next": "^5.1.0",
     "node-fetch": "^2.1.2",
     "npm-run-all": "^4.1.2",
     "prettier-standard": "^8.0.0",
     "react": "^16.3.1",
-    "react-dom": "^16.3.1"
+    "react-dom": "^16.3.1",
+    "sharp": "^0.20.1"
   }
 }

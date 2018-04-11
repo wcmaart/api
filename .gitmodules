@@ -1,3 +1,6 @@
 [submodule "data"]
 	path = data
 	url = https://github.com/wcmaart/collection.git
+[submodule "thehallaframe"]
+	path = thehallaframe
+	url = git@github.com:jedahan/thehallaframe.git
