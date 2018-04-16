@@ -5,7 +5,6 @@ const proxy = require('koa-better-http-proxy')
 const httpsProxyAgent = require('https-proxy-agent')
 const graphqlHTTP = require('koa-graphql')
 const fs = require('fs')
-const sharp = require('sharp')
 
 const fetch = require('node-fetch')
 const CSV = require('comma-separated-values')
@@ -117,9 +116,6 @@ app.use(
         const uri = require('url').parse(ctx.url).path.replace(/^\/egallery/, '')
         console.dir({uri})
         return uri;
-      },
-      userResDecorator: function(proxyRes, proxyResData, ctx) {
-        return sharp(proxyResData).resize(1024,1024).toBuffer()
       }
     }
   )
