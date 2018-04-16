@@ -56,9 +56,13 @@ const rootValue = {
     return previous
   },
   getObject: async ({ id }) => {
-    const object = await db.objects.getFromEmuseum(id)
-    let thing = object.object
-    return thing
+    const { object } = await db.objects.getFromEmuseum(id)
+    const people = object.people && object.people.value
+    if (people) {
+      object.people.values = Array.isArray(people) ? people : [people]
+      delete object.people.value
+    }
+    return object
   },
   Artworks: ({ ids }) => {
     const artworks = ids.map(id => db.artworks.get(parseInt(id)))

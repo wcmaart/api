@@ -59,7 +59,7 @@ type IntLabel {
 }
 type ArrayLabel {
   label: String,
-  value: [String]
+  values: [String!]
 }
 type Value {
   value: String
