@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/graphql.js",
     "test": "format",
-    "format": "prettier-standard src/*js components/*js"
+    "format": "prettier-standard src/*js"
   },
   "repository": {
     "type": "git",
