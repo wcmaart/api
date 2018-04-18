@@ -1,10 +1,19 @@
 const fs = require('fs')
 const CSV = require('comma-separated-values')
+const { CSV_READ_ERROR, CSV_WRITE_ERROR } = require('./errors.js')
 
 module.exports = ({csvPath}) => {
-  const collection = fs.readFileSync(csvPath, { encoding: 'utf8' })
-  const csv = CSV.parse(collection, { header: true, lineDelimiter: '\r' })
-  const db = new Map(csv.map(object => [object.id, object]))
+  try {
+    const collection = fs.readFileSync(csvPath, { encoding: 'utf8' })
+    const csv = CSV.parse(collection, { header: true, lineDelimiter: '\r' })
+    const db = new Map(csv.map(object => [object.id, object]))
+  } catch (e) {
+    console.error(CSV_ERROR.message)
+
+    return {
+      getObjects(id) { throw CSV_ERROR }
+    }
+  }
 
   return {
       getObjects({ids}) {
@@ -18,11 +27,11 @@ module.exports = ({csvPath}) => {
         })
         try {
           fs.writeFileSync(csvPath, objectsString, { encoding: 'UTF8' })
-        } catch (err) {
-          console.error(err)
-          throw new Error(`Could not write to csv!`)
+        } catch (e) {
+          console.error(e)
+          throw CSV_WRITE_ERROR
         }
-    
+
         db = newDb
       }
     }

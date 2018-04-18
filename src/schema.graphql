@@ -1,8 +1,8 @@
 type Query {
   # a single string billboard, for testing
   hello: Hello,
-  
-  # things museums often collect 
+
+  # things museums often collect
   objects(ids: [ID!]): Objects
 
   # images, audio, video, documents
@@ -57,34 +57,6 @@ type Hello {
   there: String
 }
 
-# type Object {
-#   primaryMaker: Label,
-#   primaryMedia: Value,
-#   displayDate: Label,
-#   invno: Label,
-#   id: IntLabel,
-#   title: Label,
-#   classification: Label,
-#   creditline: Label,
-#   dimensions: Label,
-#   medium: Label,
-#   people: ArrayLabel
-# }
-type Label {
-  label: String,
-  value: String
-}
-type IntLabel {
-  label: String,
-  value: Int
-}
-type ArrayLabel {
-  label: String,
-  values: [String!]
-}
-type Value {
-  value: String
-}
 input ObjectInput {
   id: Int,
   accession_number: String,
@@ -112,6 +84,7 @@ input ObjectInput {
   inscriptions: String,
   filename: String
 }
+
 type Object {
   id: Int,
   accession_number: String,

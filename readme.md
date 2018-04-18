@@ -8,27 +8,24 @@ First, clone this repo and its submodules
 
     git clone --recursive https://github.com/wcmaart/api
 
-To access the getObject endpoint, you will need to export the api key to `EMUSEUM_KEY`
+You will need to export the emuseum api key to `EMUSEUM_KEY` if you want `objects` to retreive from there.
 
 ```bash
-    npm install
-    export EMUSEUM_KEY="youremuseumapikeyhere"
-    npm start
-    open http://localhost:4000/graphql
+npm install
+export EMUSEUM_KEY="youremuseumapikeyhere"
+npm start
 ```
 
 # Technologies
 
 Right now this is a graphql endpoint, that can
 
-* query the emuseum api objects
+* query objects
 
 ```graphql
 {
-    getObject(id:16677) {
-        title {
-            value
-        }
+    objects(ids: [123]) {
+        title
         primaryMedia {
             value
         }
@@ -36,45 +33,27 @@ Right now this is a graphql endpoint, that can
 }
 ```
 
-* query artworks from the csv
+* query a test endpoint
 
 ```graphql
 {
-  Artworks(ids:[4163]) {
-    title
-  }
+    hello {
+      there
+    }
 }
 ```
 
-* mutate the csv
+* update the test endpoint
 
 ```graphql
 mutation {
-  upsertArtworks(artworks:[{
-    id:123,
-    title:"Artists must suffer, that's why its called PAINting"
-  }]) {
-    id,
-    title
-  }
+    setHello(there: "Monsieur Kenobi") {
+      there
+    }
 }
 ```
 
-* mutate the in-memory database
-
-```graphql
-mutation {
-    upsertHello(hello:"friend")
-}
-```
-
-* query the in-memory database
-
-```graphql
-{
-    hello
-}
-```
+Note that mutations will return the previous data if successful
 
 # Philosophy
 
