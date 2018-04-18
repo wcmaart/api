@@ -4,7 +4,10 @@ const cors = require('@koa/cors')
 const proxy = require('koa-better-http-proxy')
 const httpsProxyAgent = require('https-proxy-agent')
 const graphqlHTTP = require('koa-graphql')
+const koaPlayground = require('graphql-playground-middleware-koa').default
 const fs = require('fs')
+const opn = require('opn')
+const getPort = require('get-port')
 
 const fetch = require('node-fetch')
 const CSV = require('comma-separated-values')
@@ -96,8 +99,6 @@ const rootValue = {
   }
 }
 
-const graphiql = true
-
 app.use(cors())
 
 app.use(
@@ -108,7 +109,7 @@ app.use(
       const extensions = ({ document, variables, operationName, result }) => ({
         duration: new Date() - start
       })
-      return { graphiql, schema, rootValue, extensions }
+      return { schema, rootValue, extensions }
     })
   )
 )
@@ -116,16 +117,32 @@ app.use(
   mount(
     '/egallery',
     proxy('http://egallery.williams.edu', {
-      proxyReqPathResolver: function(ctx) {
-        const uri = require('url').parse(ctx.url).path.replace(/^\/egallery/, '')
-        console.dir({uri})
-        return uri;
+      proxyReqPathResolver: function (ctx) {
+        const uri = require('url')
+          .parse(ctx.url)
+          .path.replace(/^\/egallery/, '')
+        console.dir({ uri })
+        return uri
       }
-    }
-  )
+    })
   )
 )
 
-app.listen(4000, () => {
-  console.log('Running a GraphQL API server at localhost:4000/graphql')
+app.use(
+  mount(
+    '/playground',
+    koaPlayground({
+      endpoint: '/graphql'
+    })
+  )
+)
+
+getPort({ port: 4000 }).then(port => {
+  app.listen(port, () => {
+    console.log(
+      `Running a GraphQL API server at http://localhost:${port}/graphql`
+    )
+    console.log(`Opening playground at http://localhost:${port}/playground`)
+    opn(`http://localhost:${port}/playground`)
+  })
 })

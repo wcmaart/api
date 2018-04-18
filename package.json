@@ -1,41 +1,37 @@
 {
-  "name": "collection",
-  "version": "1.0.0",
+  "name": "wcma-api",
+  "version": "0.1.0",
   "main": "src/graphql.js",
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "next": "next start",
-    "graphql": "node src/graphql.js",
-    "start": "npm-run-all -p graphql next",
-    "test": "npm run-script format",
+    "start": "node src/graphql.js",
+    "test": "format",
     "format": "prettier-standard src/*js components/*js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jedahan/collection.git"
+    "url": "git+https://github.com/wcmaart/api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jedahan/collection/issues"
+    "url": "https://github.com/wcmaart/api/issues"
   },
-  "homepage": "https://github.com/jedahan/collection#readme",
+  "homepage": "https://github.com/wcmaart/api#readme",
   "dependencies": {
     "@koa/cors": "^2.2.1",
     "comma-separated-values": "^3.6.4",
-    "graphql": "^0.13.2",
+    "d3-graphviz": "^1.6.1",
+    "get-port": "^3.2.0",
+    "graphql-playground-middleware-koa": "^1.5.1",
+    "graphqlviz": "^2.0.1",
     "https-proxy-agent": "^2.2.1",
     "koa": "^2.5.0",
     "koa-better-http-proxy": "^0.2.4",
     "koa-graphql": "^0.7.5",
     "koa-mount": "^3.0.0",
     "koa-proxies": "^0.7.0",
-    "next": "^5.1.0",
     "node-fetch": "^2.1.2",
-    "npm-run-all": "^4.1.2",
-    "prettier-standard": "^8.0.0",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1"
+    "opn": "^5.3.0",
+    "prettier-standard": "^8.0.0"
   }
 }
