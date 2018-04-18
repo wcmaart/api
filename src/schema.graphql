@@ -1,54 +1,75 @@
 type Query {
-  # a string billboard, for testing
-  hello: String,
-  # some in-memory artworks for messing around
-  Locals(ids: [ID!]): [Artwork]
-  # artworks backed by our csv
-  Artworks(ids: [ID!]): [Artwork]
-  # objects queried from eMuseum api (requires setting EMUSEUM_KEY)
-  getObject(id: ID!): Object
-}
+  # a single string billboard, for testing
+  hello: Hello,
+  
+  # things museums often collect 
+  objects(ids: [ID!]): Objects
 
+  # images, audio, video, documents
+  medias(ids: [ID!]): [Media]
+
+  # usually human
+  people(ids: [ID!]): [Person]
+
+  # a time, some duration, a place, often with people, sometimes with objects
+  events(ids: [ID!]): [Event]
+
+  # some where
+  places(ids: [ID!]): [Place]
+}
+type Objects {
+  source: String
+  objects: [Object]
+}
+type Media {
+  name: String
+}
+type Person {
+  name: String
+}
+type Event {
+  name: String
+}
+type Place {
+  name: String
+}
 # There are three mutations which are all upserts, meaning they
 # will update an item if it exists to the new data, or insert if it doesn't exist.
 #
 # Some mutations will write to the underlying data source, some will not.
 type Mutation {
 
-  # This is a test upsert, kinda like a single string in-memory billboard
-  upsertHello(input: UpsertHelloInput!): Hello
+  # This is a test, kinda like a single string in-memory billboard
+  setHello(input: HelloInput!): Hello
 
   # This will update the underlying csv!
-  upsertArtworks(artworks: [ArtworkInput!]): [Artwork]
-
-  # This is an in-memory map for messing about
-  upsertLocals(locals: [ArtworkInput!]): [Artwork]
+  setObjects(objects: [ObjectInput!]): [Object]
 }
 
 # new greeting contents
-input UpsertHelloInput {
+input HelloInput {
   # who should we say hi to ya?
-  hello: String!
+  there: String!
 }
 
-# who are we greeting?
+# is it me you're looking for?
 type Hello {
-  hello: String
+  there: String
 }
 
-type Object {
-  primaryMaker: Label,
-  primaryMedia: Value,
-  displayDate: Label,
-  invno: Label,
-  id: IntLabel,
-  title: Label,
-  classification: Label,
-  creditline: Label,
-  dimensions: Label,
-  medium: Label,
-  people: ArrayLabel
-}
+# type Object {
+#   primaryMaker: Label,
+#   primaryMedia: Value,
+#   displayDate: Label,
+#   invno: Label,
+#   id: IntLabel,
+#   title: Label,
+#   classification: Label,
+#   creditline: Label,
+#   dimensions: Label,
+#   medium: Label,
+#   people: ArrayLabel
+# }
 type Label {
   label: String,
   value: String
@@ -64,7 +85,7 @@ type ArrayLabel {
 type Value {
   value: String
 }
-input ArtworkInput {
+input ObjectInput {
   id: Int,
   accession_number: String,
   title: String,
@@ -91,7 +112,7 @@ input ArtworkInput {
   inscriptions: String,
   filename: String
 }
-type Artwork {
+type Object {
   id: Int,
   accession_number: String,
   title: String,
