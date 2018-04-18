@@ -1,20 +1,20 @@
 type Query {
-  # a single string billboard, for testing
+  "a single string billboard, for testing"
   hello: Hello,
 
-  # things museums often collect
+  "things museums often collect"
   objects(ids: [ID!]): Objects
 
-  # images, audio, video, documents
+  "images, audio, video, documents"
   medias(ids: [ID!]): [Media]
 
-  # usually human
+  "usually human"
   people(ids: [ID!]): [Person]
 
-  # a time, some duration, a place, often with people, sometimes with objects
+  "a time, some duration, a place, often with people, sometimes with objects"
   events(ids: [ID!]): [Event]
 
-  # some where
+  "some where"
   places(ids: [ID!]): [Place]
 }
 type Objects {
@@ -33,26 +33,23 @@ type Event {
 type Place {
   name: String
 }
-# There are three mutations which are all upserts, meaning they
-# will update an item if it exists to the new data, or insert if it doesn't exist.
-#
-# Some mutations will write to the underlying data source, some will not.
-type Mutation {
 
-  # This is a test, kinda like a single string in-memory billboard
+" All mutations are upserts, that is they will create a new entry or update an existing one"
+type Mutation {
+  "This is a test, kinda like a single string in-memory billboard"
   setHello(input: HelloInput!): Hello
 
-  # This will update the underlying csv!
+  "This will update the underlying csv!"
   setObjects(objects: [ObjectInput!]): [Object]
 }
 
-# new greeting contents
+" new greeting contents"
 input HelloInput {
-  # who should we say hi to ya?
+  "how should we say hello back to ya?"
   there: String!
 }
 
-# is it me you're looking for?
+" is it me you're looking for?"
 type Hello {
   there: String
 }
@@ -85,6 +82,7 @@ input ObjectInput {
   filename: String
 }
 
+" This is probably the thing you are looking for "
 type Object {
   id: Int,
   accession_number: String,
