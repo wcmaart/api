@@ -23,6 +23,7 @@
     "d3-graphviz": "^1.6.1",
     "get-port": "^3.2.0",
     "graphql-playground-middleware-koa": "^1.5.1",
+    "graphql-voyager": "^1.0.0-rc.15",
     "graphqlviz": "^2.0.1",
     "https-proxy-agent": "^2.2.1",
     "koa": "^2.5.0",

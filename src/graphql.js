@@ -5,6 +5,8 @@ const proxy = require('koa-better-http-proxy')
 const httpsProxyAgent = require('https-proxy-agent')
 const graphqlHTTP = require('koa-graphql')
 const koaPlayground = require('graphql-playground-middleware-koa').default
+const voyager = require('graphql-voyager/middleware').koa
+
 const opn = require('opn')
 const getPort = require('get-port')
 const app = new Koa()
@@ -81,6 +83,15 @@ app.use(
     '/playground',
     koaPlayground({
       endpoint: '/graphql'
+    })
+  )
+)
+
+app.use(
+  mount(
+    '/voyager',
+    voyager({
+      endpointUrl: '/graphql'
     })
   )
 )
