@@ -3,10 +3,11 @@ const CSV = require('comma-separated-values')
 const { CSV_READ_ERROR, CSV_WRITE_ERROR } = require('./errors.js')
 
 module.exports = ({ csvPath }) => {
+  let db
   try {
     const collection = fs.readFileSync(csvPath, { encoding: 'utf8' })
     const csv = CSV.parse(collection, { header: true, lineDelimiter: '\r' })
-    const db = new Map(csv.map(object => [object.id, object]))
+    db = new Map(csv.map(object => [object.id, object]))
   } catch (e) {
     console.error(CSV_ERROR.message)
 

@@ -1,3 +1,13 @@
+type CsvObject {
+  object: Object
+}
+
+type EmuseumObject {
+  object: Object
+}
+
+union csvOrEmuseumObject = CsvObject | EmuseumObject
+
 type Query {
   "a single string billboard, for testing"
   hello: Hello,
@@ -17,13 +27,20 @@ type Query {
   "some where"
   places(ids: [ID!]): [Place]
 }
+
+"the collection of object"
 type Objects {
   source: String
+  raw: csvOrEmuseumObject
   objects: [Object]
 }
+
+"an image, sound, video, or document"
 type Media {
   name: String
 }
+
+"a real human bean"
 type Person {
   name: String
 }
