@@ -9,17 +9,29 @@ module.exports = ({ csvPath }) => {
     const csv = CSV.parse(collection, { header: true, lineDelimiter: '\r' })
     db = new Map(csv.map(object => [object.id, object]))
   } catch (e) {
-    console.error(CSV_ERROR.message)
+    console.error(CSV_READ_ERROR.message)
 
     return {
       getObjects (id) {
-        throw CSV_ERROR
+        throw CSV_READ_ERROR
       }
     }
   }
 
   return {
     getObjects ({ ids }) {
+      const rawObjects = this.getRawObjects({ ids })
+      const objects = rawObjects.map(raw => {
+        const {
+          id, title, medium, maker, dimensions, classification, credit_line: creditline
+        } = raw
+        return {
+          id, title, medium, maker, dimensions, classification, creditline, raw
+        }
+      })
+      return objects
+    },
+    getRawObjects ({ ids }) {
       return ids.map(id => db.get(parseInt(id)))
     },
     setObjects ({ objects }) {

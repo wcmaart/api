@@ -5,43 +5,39 @@ module.exports = ({ emuseumKey }) => {
   if (!emuseumKey) {
     console.error(MISSING_EMUSEUM_KEY.message)
     return {
-      getObject (id) {
+      async getObjects ({ids}) {
         throw MISSING_EMUSEUM_KEY
       }
     }
   }
 
-  const turnPersonIntoPeople = object => {
-    const people = object.people && object.people.value
-    if (people) {
-      object.people = Array.isArray(people) ? people : [people]
-    }
-    return object
-  }
-
-  const turnLabelsIntoStrings = object => {
-    const labels = [
-      'title',
-      'primaryMaker',
-      'displayDate',
-      'invno',
-      'id',
-      'classification',
-      'creditline',
-      'dimensions',
-      'medium'
-    ]
-    for (label of labels) {
-      const value = object[label] && object[label].value
-      if (value) {
-        object[label] = value
-      }
-    }
-    return object
-  }
-
   return {
     async getObjects ({ ids }) {
+      const rawObjects = await this.getRawObjects({ ids })
+      return rawObjects.map(raw => {
+        const {
+          id: {value: id},
+          title: {value: title},
+          primaryMaker: {value: maker},
+          medium: {value: medium},
+          classification: {value: classification},
+          creditline: {value: creditline},
+          dimensions: {value: dimensions}
+        } = raw
+
+        return {
+          id,
+          title,
+          maker,
+          medium,
+          classification,
+          creditline,
+          dimensions,
+          raw
+        }
+      })
+    },
+    async getRawObjects ({ ids }) {
       if (!emuseumKey) throw MISSING_EMUSEUM_KEY
 
       const response = Promise.all(
@@ -50,8 +46,6 @@ module.exports = ({ emuseumKey }) => {
           return await fetch(uri)
             .then(res => res.json())
             .then(object => object.object)
-            .then(turnPersonIntoPeople)
-            .then(turnLabelsIntoStrings)
         })
       )
       return response

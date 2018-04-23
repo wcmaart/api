@@ -1,19 +1,58 @@
-type CsvObject {
-  object: Object
-}
-
+"object in emuseum format"
 type EmuseumObject {
-  object: Object
+  primaryMaker: Label,
+  primaryMedia: Value,
+  displayDate: Label,
+  invno: Label,
+  id: IntLabel,
+  title: Label,
+  classification: Label,
+  creditline: Label,
+  dimensions: Label,
+  medium: Label,
+  people: ArrayLabel
 }
 
-union csvOrEmuseumObject = CsvObject | EmuseumObject
+"wrapped value for string with label"
+type Label {
+  label: String,
+  value: String
+}
 
+"wrapped value for int"
+type IntLabel {
+  label: String,
+  value: Int
+}
+
+"wrapped value for array"
+type ArrayLabel {
+  label: String,
+  values: [String!]
+}
+
+"wrapped value for string without label"
+type Value {
+  value: String
+}
+
+union RawObject = CsvObject | EmuseumObject
+
+"""
+# Here are some cool queries:
+
+    {
+      objects(ids: [123, 6697]) {
+        title
+      }
+    }
+"""
 type Query {
   "a single string billboard, for testing"
   hello: Hello,
 
   "things museums often collect"
-  objects(ids: [ID!]): Objects
+  objects(ids: [ID!]): [Object]
 
   "images, audio, video, documents"
   medias(ids: [ID!]): [Media]
@@ -26,13 +65,6 @@ type Query {
 
   "some where"
   places(ids: [ID!]): [Place]
-}
-
-"the collection of object"
-type Objects {
-  source: String
-  raw: csvOrEmuseumObject
-  objects: [Object]
 }
 
 "an image, sound, video, or document"
@@ -66,12 +98,13 @@ input HelloInput {
   there: String!
 }
 
-" is it me you're looking for?"
+"is it me you're looking for?"
 type Hello {
   there: String
 }
 
-input ObjectInput {
+"we can only write to the csv for now"
+input CsvObjectInput {
   id: Int,
   accession_number: String,
   title: String,
@@ -99,8 +132,32 @@ input ObjectInput {
   filename: String
 }
 
-" This is probably the thing you are looking for "
+"A thing in the collection"
+input ObjectInput {
+  id: Int,
+  title: String,
+  medium: String,
+  maker: String,
+  dimensions: String,
+  people: [String],
+  creditline: String,
+  raw: CsvObjectInput
+}
+
+"A thing in the collection"
 type Object {
+  id: Int,
+  title: String,
+  medium: String,
+  maker: String,
+  dimensions: String,
+  people: [String],
+  creditline: String,
+  raw: RawObject
+}
+
+"Object in Csv format"
+type CsvObject {
   id: Int,
   accession_number: String,
   title: String,
@@ -125,5 +182,5 @@ type Object {
   signed: String,
   marks: String,
   inscriptions: String,
-  filename: String
+  filename: String,
 }

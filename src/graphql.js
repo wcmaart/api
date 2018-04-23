@@ -2,7 +2,6 @@ const Koa = require('koa')
 const mount = require('koa-mount')
 const cors = require('@koa/cors')
 const proxy = require('koa-better-http-proxy')
-const httpsProxyAgent = require('https-proxy-agent')
 const graphqlHTTP = require('koa-graphql')
 const koaPlayground = require('graphql-playground-middleware-koa').default
 const voyager = require('graphql-voyager/middleware').koa
@@ -26,19 +25,13 @@ const rootValue = {
   hello: () => db.hello,
   objects: async ids => {
     try {
-      return {
-        objects: await emuseum.getObjects(ids),
-        source: 'emuseum'
-      }
+      return await emuseum.getObjects(ids)
     } catch (e) {
-      return {
-        objects: await csvmuseum.getObjects(ids),
-        source: 'csv'
-      }
+      return csvmuseum.getObjects(ids)
     }
   },
   setHello: ({ hello }) => {
-    previous = db.hello
+    const previous = db.hello
     db.hello = hello
     return previous
   },
@@ -58,7 +51,7 @@ app.use(
     graphqlHTTP(async request => {
       const start = Date.now()
       const extensions = ({ document, variables, operationName, result }) => ({
-        duration: new Date() - start
+        duration: Date.now() - start
       })
       return { schema, rootValue, extensions }
     })
