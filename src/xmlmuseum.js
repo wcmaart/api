@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { parseString, processors } = require('xml2js')
 const { parseNumbers } = processors
-const { XML_READ_ERROR, XML_WRITE_ERROR } = require('./errors.js')
+const { XML_READ_ERROR, XML_PARSE_ERROR } = require('./errors.js')
 
 module.exports = ({ xmlPath }) => {
   const options = {
