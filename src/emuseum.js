@@ -5,7 +5,7 @@ module.exports = ({ emuseumKey }) => {
   if (!emuseumKey) {
     console.error(MISSING_EMUSEUM_KEY.message)
     return {
-      async getObjects ({ids}) {
+      async getObjects ({ ids }) {
         throw MISSING_EMUSEUM_KEY
       }
     }
@@ -14,16 +14,20 @@ module.exports = ({ emuseumKey }) => {
   return {
     async getObjects ({ ids }) {
       const rawObjects = await this.getRawObjects({ ids })
-      return rawObjects.map(raw => {
+      const objects = rawObjects.map(raw => {
         const {
-          id: {value: id},
-          title: {value: title},
-          primaryMaker: {value: maker},
-          medium: {value: medium},
-          classification: {value: classification},
-          creditline: {value: creditline},
-          dimensions: {value: dimensions}
+          id: { value: id },
+          title: { value: title },
+          medium: { value: medium },
+          classification: { value: classification },
+          creditline: { value: creditline },
+          dimensions: { value: dimensions },
+          primaryMaker,
+          people
         } = raw
+
+        let maker = primaryMaker && primaryMaker.value
+        maker = maker || people && people.value
 
         return {
           id,
@@ -36,6 +40,7 @@ module.exports = ({ emuseumKey }) => {
           raw
         }
       })
+      return objects
     },
     async getRawObjects ({ ids }) {
       if (!emuseumKey) throw MISSING_EMUSEUM_KEY

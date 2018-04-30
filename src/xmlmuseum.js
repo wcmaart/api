@@ -1,13 +1,13 @@
 const fs = require('fs')
 const { parseString, processors } = require('xml2js')
 const { parseNumbers } = processors
-const { XML_READ_ERROR, XML_WRITE_ERROR } = require('./errors.js')
+const { XML_READ_ERROR, XML_PARSE_ERROR } = require('./errors.js')
 
 module.exports = ({ xmlPath }) => {
   const options = {
     explicitArray: false,
     trim: true,
-    valueProcessors: [ parseNumbers ]
+    valueProcessors: [parseNumbers]
   }
 
   let db
@@ -43,7 +43,7 @@ module.exports = ({ xmlPath }) => {
           institution,
           Description,
           startDate,
-          histObjXrefs
+          HistObjXrefs
         } = rawEvent
 
         const event = {
@@ -56,7 +56,7 @@ module.exports = ({ xmlPath }) => {
           institution,
           Description,
           startDate: new Date(startDate),
-          objects: histObjXrefs
+          HistObjXIDs: HistObjXrefs.map(({ObjectID}) => ObjectID)
         }
         return event
       })
@@ -64,6 +64,6 @@ module.exports = ({ xmlPath }) => {
     },
     getRawEvents ({ ids }) {
       return ids.map(id => db.get(parseInt(id)))
-    },
+    }
   }
 }

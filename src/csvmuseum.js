@@ -6,7 +6,35 @@ module.exports = ({ csvPath }) => {
   let db
   try {
     const collection = fs.readFileSync(csvPath, { encoding: 'utf8' })
-    const csv = CSV.parse(collection, { header: true, lineDelimiter: '\r' })
+    const cast = [
+      'Number', // id
+      'String', // accession_number
+      'String', // title
+      'String', // maker
+      'Number', // ULAN
+      'String', // department
+      'String', // classification
+      'String', // culture
+      'String', // period
+      'String', // creation_date
+      'String', //creation_date_earliest
+      'String', // creation_date_latest
+      'String', // accession_date
+      'String', //source_name
+      'String', // object_name
+      'String', // medium
+      'String', // dimensions
+      'String', // description
+      'String', // credit_line
+      'String', // paper_support
+      'String', // catalogue_raisonne
+      'String', // portfolio
+      'String', // signed
+      'String', // marks
+      'String', // inscriptions
+      'String'  // filename
+    ]
+    const csv = CSV.parse(collection, { header: true, lineDelimiter: '\r', cast })
     db = new Map(csv.map(object => [object.id, object]))
   } catch (e) {
     console.error(CSV_READ_ERROR.message)
@@ -23,10 +51,23 @@ module.exports = ({ csvPath }) => {
       const rawObjects = this.getRawObjects({ ids })
       const objects = rawObjects.map(raw => {
         const {
-          id, title, medium, maker, dimensions, classification, credit_line: creditline
+          id,
+          title,
+          medium,
+          maker,
+          dimensions,
+          classification,
+          credit_line: creditline
         } = raw
         return {
-          id, title, medium, maker, dimensions, classification, creditline, raw
+          id,
+          title,
+          medium,
+          maker,
+          dimensions,
+          classification,
+          creditline,
+          raw
         }
       })
       return objects
