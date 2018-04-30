@@ -23,11 +23,24 @@ module.exports = ({ csvPath }) => {
       const rawObjects = this.getRawObjects({ ids })
       const objects = rawObjects.map(raw => {
         const {
-          id, title, medium, maker, dimensions, classification, credit_line: creditline
+          id,
+          title,
+          medium,
+          maker,
+          dimensions,
+          classification,
+          credit_line: creditline
         } = raw
         raw.__typename = 'CsvObject'
         return {
-          id, title, medium, maker, dimensions, classification, creditline, raw
+          id,
+          title,
+          medium,
+          maker,
+          dimensions,
+          classification,
+          creditline,
+          raw
         }
       })
       return objects

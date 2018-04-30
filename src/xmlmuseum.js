@@ -7,7 +7,7 @@ module.exports = ({ xmlPath }) => {
   const options = {
     explicitArray: false,
     trim: true,
-    valueProcessors: [ parseNumbers ]
+    valueProcessors: [parseNumbers]
   }
 
   let db
@@ -64,6 +64,6 @@ module.exports = ({ xmlPath }) => {
     },
     getRawEvents ({ ids }) {
       return ids.map(id => db.get(parseInt(id)))
-    },
+    }
   }
 }
