@@ -29,7 +29,7 @@ Right now this is a graphql endpoint, that can
   objects(ids:[123]) {
     title
 
-  raw {
+    raw {
       ...on EmuseumObject {
         primaryMedia {
           value
