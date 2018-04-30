@@ -12,6 +12,7 @@ const koaPlayground = require('graphql-playground-middleware-koa').default
 const voyager = require('graphql-voyager/middleware').koa
 
 // our api!
+require('dotenv').config()
 const emuseumKey = process.env.EMUSEUM_KEY
 const emuseum = require('./emuseum.js')({ emuseumKey })
 
