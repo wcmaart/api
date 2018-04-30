@@ -25,6 +25,7 @@ module.exports = ({ csvPath }) => {
         const {
           id, title, medium, maker, dimensions, classification, credit_line: creditline
         } = raw
+        raw.__typename = 'CsvObject'
         return {
           id, title, medium, maker, dimensions, classification, creditline, raw
         }

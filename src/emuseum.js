@@ -14,7 +14,7 @@ module.exports = ({ emuseumKey }) => {
   return {
     async getObjects ({ ids }) {
       const rawObjects = await this.getRawObjects({ ids })
-      return rawObjects.map(raw => {
+      const objects = rawObjects.map(raw => {
         const {
           id: {value: id},
           title: {value: title},
@@ -24,6 +24,8 @@ module.exports = ({ emuseumKey }) => {
           creditline: {value: creditline},
           dimensions: {value: dimensions}
         } = raw
+
+        raw.__typename = 'EmuseumObject'
 
         return {
           id,
@@ -36,6 +38,7 @@ module.exports = ({ emuseumKey }) => {
           raw
         }
       })
+      return objects
     },
     async getRawObjects ({ ids }) {
       if (!emuseumKey) throw MISSING_EMUSEUM_KEY

@@ -26,12 +26,21 @@ Right now this is a graphql endpoint, that can
 
 ```graphql
 {
-    objects(ids: [123]) {
-        title
+  objects(ids:[123]) {
+    title
+
+  raw {
+      ...on EmuseumObject {
         primaryMedia {
-            value
+          value
         }
+      }
+      ...on CsvObject {
+        filename
+      }
     }
+
+	}
 }
 ```
 
