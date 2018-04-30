@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "main": "src/graphql.js",
   "scripts": {
-    "start": "node src/graphql.js",
+    "faker": "graphql-faker -e http://localhost:4000/graphql src/schema.graphql",
+    "api": "node src/graphql.js",
+    "start": "npm-run-all -p api",
     "test": "format",
     "format": "prettier-standard src/*js"
   },
@@ -22,6 +24,7 @@
     "comma-separated-values": "^3.6.4",
     "d3-graphviz": "^1.6.1",
     "get-port": "^3.2.0",
+    "graphql-faker": "^1.7.2",
     "graphql-playground-middleware-koa": "^1.5.1",
     "graphql-voyager": "^1.0.0-rc.15",
     "graphqlviz": "^2.0.1",
@@ -32,7 +35,9 @@
     "koa-mount": "^3.0.0",
     "koa-proxies": "^0.7.0",
     "node-fetch": "^2.1.2",
+    "npm-run-all": "^4.1.2",
     "opn": "^5.3.0",
-    "prettier-standard": "^8.0.0"
+    "prettier-standard": "^8.0.0",
+    "xml2js": "^0.4.19"
   }
 }

@@ -76,9 +76,22 @@ type Media {
 type Person {
   name: String
 }
+
+"a time and place that a thing happened"
 type Event {
-  name: String
+  eventId: ID!
+  eventName: String
+  facultyMember: String
+  subjectAndCourse: String
+  subject: String
+  courseNumber: Int
+  institution: String
+  Description: String
+  "YYYY-MM-DD format, should make it an epoch"
+  startDate: String
+  objects: [Object]
 }
+
 type Place {
   name: String
 }

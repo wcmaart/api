@@ -17,6 +17,9 @@ const emuseum = require('./emuseum.js')({ emuseumKey })
 const csvPath = 'data/wcma-collection.csv'
 const csvmuseum = require('./csvmuseum')({ csvPath })
 
+const xmlPath = 'EventsWithObjects_4_30_18.xml'
+const xmlmuseum = require('./xmlmuseum')({ xmlPath })
+
 const db = {
   there: `General Kenobi!`
 }
@@ -40,6 +43,9 @@ const rootValue = {
     const previous = await this.query.objects(ids)
     csvmuseum.setObjects({ objects })
     return previous
+  },
+  events: async ids => {
+    return xmlmuseum.getEvents(ids)
   }
 }
 
