@@ -25,8 +25,6 @@ module.exports = ({ emuseumKey }) => {
           dimensions: { value: dimensions }
         } = raw
 
-        raw.__typename = 'EmuseumObject'
-
         return {
           id,
           title,

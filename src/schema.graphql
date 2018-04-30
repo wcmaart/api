@@ -1,4 +1,4 @@
-"object in emuseum format"
+# object in emuseum format
 type EmuseumObject {
   primaryMaker: Label,
   primaryMedia: Value,
@@ -13,71 +13,70 @@ type EmuseumObject {
   people: ArrayLabel
 }
 
-"wrapped value for string with label"
+# wrapped value for string with label
 type Label {
   label: String,
   value: String
 }
 
-"wrapped value for int"
+# wrapped value for int
 type IntLabel {
   label: String,
   value: Int
 }
 
-"wrapped value for array"
+# wrapped value for array
 type ArrayLabel {
   label: String,
   values: [String!]
 }
 
-"wrapped value for string without label"
+# wrapped value for string without label
 type Value {
   value: String
 }
 
 union RawObject = CsvObject | EmuseumObject
 
-"""
-# Here are some cool queries:
-
-    {
-      objects(ids: [123, 6697]) {
-        title
-      }
-    }
-"""
+# ### Here are some cool queries:
+#
+#     {
+#       objects(ids: [123, 6697]) {
+#         title
+#       }
+#     }
+#
 type Query {
-  "a single string billboard, for testing"
+  # a single string billboard, for testing
   hello: Hello,
 
-  "things museums often collect"
+  # things museums often collect
   objects(ids: [ID!]): [Object]
 
-  "images, audio, video, documents"
+  # images, audio, video, documents
   medias(ids: [ID!]): [Media]
 
-  "usually human"
+  # usually human
   people(ids: [ID!]): [Person]
 
-  "a time, some duration, a place, often with people, sometimes with objects"
+  # a time, some duration, a place, often with people, sometimes with objects
   events(ids: [ID!]): [Event]
 
-  "some where"
+  # some where
   places(ids: [ID!]): [Place]
 }
 
-"an image, sound, video, or document"
+# an image, sound, video, or document
 type Media {
   name: String
 }
 
-"a real human bean"
+# a real human bean
 type Person {
   name: String
 }
 
-"a time and place that a thing happened"
+# a time and place that a thing happened
 type Event {
   eventId: ID!
   eventName: String
@@ -87,36 +86,37 @@ type Event {
   courseNumber: Int
   institution: String
   Description: String
-  "YYYY-MM-DD format, should make it an epoch"
+  # YYYY-MM-DD format, should make it an epoch
   startDate: String
   objects: [Object]
 }
 
+# where things happen
 type Place {
   name: String
 }
 
-" All mutations are upserts, that is they will create a new entry or update an existing one"
+# All mutations are upserts, that is they will create a new entry or update an existing one
 type Mutation {
-  "This is a test, kinda like a single string in-memory billboard"
+  # This is a test, kinda like a single string in-memory billboard
   setHello(input: HelloInput!): Hello
 
-  "This will update the underlying csv!"
+  # This will update the underlying csv!
   setObjects(objects: [ObjectInput!]): [Object]
 }
 
-" new greeting contents"
+# new greeting contents
 input HelloInput {
-  "how should we say hello back to ya?"
+  # how should we say hello back to ya?
   there: String!
 }
 
-"is it me you're looking for?"
+# is it me you're looking for?
 type Hello {
   there: String
 }
 
-"we can only write to the csv for now"
+# we can only write to the csv for now
 input CsvObjectInput {
   id: Int,
   accession_number: String,
@@ -145,7 +145,7 @@ input CsvObjectInput {
   filename: String
 }
 
-"A thing in the collection"
+# A thing in the collection
 input ObjectInput {
   id: Int,
   title: String,
@@ -157,7 +157,7 @@ input ObjectInput {
   raw: CsvObjectInput
 }
 
-"A thing in the collection"
+# A thing in the collection
 type Object {
   id: Int,
   title: String,
@@ -169,7 +169,7 @@ type Object {
   raw: RawObject
 }
 
-"Object in Csv format"
+# Object in Csv format
 type CsvObject {
   id: Int,
   accession_number: String,

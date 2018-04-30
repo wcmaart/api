@@ -2,15 +2,16 @@ const Koa = require('koa')
 const mount = require('koa-mount')
 const cors = require('@koa/cors')
 const proxy = require('koa-better-http-proxy')
-const graphqlHTTP = require('koa-graphql')
+const body = require('koa-bodyparser')
+const { graphqlKoa } = require('apollo-server-koa')
+const { makeExecutableSchema } = require('graphql-tools')
+const app = new Koa()
+
+// Utilities
 const koaPlayground = require('graphql-playground-middleware-koa').default
 const voyager = require('graphql-voyager/middleware').koa
 
-const opn = require('opn')
-const getPort = require('get-port')
-const app = new Koa()
-const schema = require('./schema.js')
-
+// our api!
 const emuseumKey = process.env.EMUSEUM_KEY
 const emuseum = require('./emuseum.js')({ emuseumKey })
 
@@ -20,50 +21,73 @@ const csvmuseum = require('./csvmuseum')({ csvPath })
 const xmlPath = 'EventsWithObjects_4_30_18.xml'
 const xmlmuseum = require('./xmlmuseum')({ xmlPath })
 
+const schemaPath = `${__dirname}/schema.graphql`
+const typeDefs = require('fs')
+  .readFileSync(schemaPath)
+  .toString()
+
 const db = {
   there: `General Kenobi!`
 }
 
-const rootValue = {
-  hello: () => db.hello,
-  objects: async ids => {
-    try {
-      return await emuseum.getObjects(ids)
-    } catch (e) {
-      return csvmuseum.getObjects(ids)
+const resolvers = {
+  Query: {
+    hello: () => db.hello,
+    objects: async (_, ids) => {
+      try {
+        return await emuseum.getObjects(ids)
+      } catch (e) {
+        return csvmuseum.getObjects(ids)
+      }
+    },
+    events: async (_, ids) => {
+      return xmlmuseum.getEvents(ids)
     }
   },
-  setHello: ({ hello }) => {
-    const previous = db.hello
-    db.hello = hello
-    return previous
+  Mutation: {
+    setHello: (_, { hello }) => {
+      const previous = db.hello
+      db.hello = hello
+      return previous
+    },
+    setObjects: async (_, { objects }) => {
+      const ids = objects.map(({ id }) => id)
+      const previous = await this.query.objects(ids)
+      csvmuseum.setObjects({ objects })
+      return previous
+    }
   },
-  setObjects: async ({ objects }) => {
-    const ids = objects.map(({ id }) => id)
-    const previous = await this.query.objects(ids)
-    csvmuseum.setObjects({ objects })
-    return previous
-  },
-  events: async ids => {
-    return xmlmuseum.getEvents(ids)
+  RawObject: {
+    __resolveType (object, info) {
+      if ('accession_number' in object) {
+        return 'CsvObject'
+      } else {
+        return 'EmuseumObject'
+      }
+    }
   }
 }
 
-app.use(cors())
+const schema = makeExecutableSchema({ typeDefs, resolvers })
 
+app.use(cors())
+app.use(body())
+
+// Api endpoint for graphql
 app.use(
   mount(
     '/graphql',
-    graphqlHTTP(async request => {
+    graphqlKoa(async request => {
       const start = Date.now()
       const extensions = ({ document, variables, operationName, result }) => ({
         duration: Date.now() - start
       })
-      return { schema, rootValue, extensions }
+      return { schema, extensions }
     })
   )
 )
 
+// Image proxy so we can get pictures
 app.use(
   mount(
     '/egallery',
@@ -95,11 +119,15 @@ app.use(
   )
 )
 
+// Start the server on 4000 or first available port
+const getPort = require('get-port')
 getPort({ port: 4000 }).then(port => {
   app.listen(port, () => {
     const base = `http://localhost:${port}`
     console.log(`API: ${base}/graphql`)
     console.log(`Playground: ${base}/playground`)
+
+    const opn = require('opn')
     opn(`${base}/playground`)
   })
 })
