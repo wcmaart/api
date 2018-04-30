@@ -51,7 +51,7 @@ type Query {
   hello: Hello,
 
   # things museums often collect
-  objects(ids: [ID!]): [Object]
+  objects(ids: [ID!], filter: String): [Object]
 
   # images, audio, video, documents
   medias(ids: [ID!]): [Media]
@@ -89,7 +89,7 @@ type Event {
   # YYYY-MM-DD format, should make it an epoch
   startDate: String
   histObjXIDs: [ ID ]
-  objects: [Object]
+  objects(filter: String): [Object]
 }
 
 # where things happen

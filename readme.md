@@ -20,6 +20,8 @@ You will probably want to visit [http://localhost:4000/playground][] and [http:/
 
 # Technologies
 
+![image of complex query](./images/filtering.png)
+
 Right now this is a graphql endpoint, that can
 
 * query objects

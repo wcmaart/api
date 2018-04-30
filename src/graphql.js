@@ -30,20 +30,25 @@ const db = {
   there: `General Kenobi!`
 }
 
-const objectResolver = async ids => {
+const objectResolver = async ({ids, filter}) => {
+  let objects
   try {
-    return await emuseum.getObjects(ids)
+    objects = await emuseum.getObjects({ids})
   } catch (e) {
-    return csvmuseum.getObjects(ids)
+    objects = csvmuseum.getObjects({ids})
   }
+
+  if (filter) return objects.filter(({title}) => title && title.includes(filter))
+
+  return objects
 }
 
 const resolvers = {
   Query: {
     hello: () => db.hello,
-    objects: (_, ids) => objectResolver(ids),
-    events: async (_, ids) => {
-      return xmlmuseum.getEvents(ids)
+    objects: (_, args) => objectResolver(args),
+    events: async (_, args) => {
+      return xmlmuseum.getEvents(args)
     }
   },
   Mutation: {
@@ -60,8 +65,8 @@ const resolvers = {
     }
   },
   Event: {
-    objects ({HistObjXIDs}) {
-      return objectResolver({ ids: HistObjXIDs })
+    objects ({HistObjXIDs}, args) {
+      return objectResolver({ ids: HistObjXIDs, ...args })
     }
   },
   RawObject: {
