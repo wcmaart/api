@@ -88,6 +88,7 @@ type Event {
   Description: String
   # YYYY-MM-DD format, should make it an epoch
   startDate: String
+  histObjXIDs: [ ID ]
   objects: [Object]
 }
 

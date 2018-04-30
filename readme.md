@@ -44,6 +44,21 @@ Right now this is a graphql endpoint, that can
 }
 ```
 
+* query events
+
+> what were all the artwork titles present in event 9
+
+```graphql
+{
+  events(ids:[9]) {
+    eventName
+    objects {
+      title
+    }
+  }
+}
+```
+
 * proxy egallery images:
 
 ```bash

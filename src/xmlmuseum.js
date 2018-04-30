@@ -43,7 +43,7 @@ module.exports = ({ xmlPath }) => {
           institution,
           Description,
           startDate,
-          histObjXrefs
+          HistObjXrefs
         } = rawEvent
 
         const event = {
@@ -56,7 +56,7 @@ module.exports = ({ xmlPath }) => {
           institution,
           Description,
           startDate: new Date(startDate),
-          objects: histObjXrefs
+          HistObjXIDs: HistObjXrefs.map(({ObjectID}) => ObjectID)
         }
         return event
       })

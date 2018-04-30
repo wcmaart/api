@@ -30,16 +30,18 @@ const db = {
   there: `General Kenobi!`
 }
 
+const objectResolver = async ids => {
+  try {
+    return await emuseum.getObjects(ids)
+  } catch (e) {
+    return csvmuseum.getObjects(ids)
+  }
+}
+
 const resolvers = {
   Query: {
     hello: () => db.hello,
-    objects: async (_, ids) => {
-      try {
-        return await emuseum.getObjects(ids)
-      } catch (e) {
-        return csvmuseum.getObjects(ids)
-      }
-    },
+    objects: (_, ids) => objectResolver(ids),
     events: async (_, ids) => {
       return xmlmuseum.getEvents(ids)
     }
@@ -55,6 +57,11 @@ const resolvers = {
       const previous = await this.query.objects(ids)
       csvmuseum.setObjects({ objects })
       return previous
+    }
+  },
+  Event: {
+    objects ({HistObjXIDs}) {
+      return objectResolver({ ids: HistObjXIDs })
     }
   },
   RawObject: {
