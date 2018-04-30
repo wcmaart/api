@@ -5,14 +5,26 @@ The collection data is from [*Collection*](https://github.com/wcmaart/collection
 # Getting started
 
 First, clone this repo and its submodules
+```
+git clone --recursive https://github.com/wcmaart/api
+```
 
-    git clone --recursive https://github.com/wcmaart/api
+When you do a git pull in the future, you will also need to ensure the submodules are up to date
+```
+git submodule update --init --recursive
+```
+As a shortcut, you can use this npm package script
+```
+npm run pull
+# Note: this is a shortcut for `git pull && git submodule update --init --recursive`
+```
 
-You will need to export the emuseum api key to `EMUSEUM_KEY` if you want `objects` to retreive from there.
+You will need to add the emuseum api key as an environment variable.
+Please copy and rename the `.env.example` file to `.env`. And replace the value for `EMUSEUM_KEY` with the correct key obtained from the dev team.
 
+Now install and start the app.
 ```bash
 npm install
-export EMUSEUM_KEY="youremuseumapikeyhere"
 npm start
 ```
 
