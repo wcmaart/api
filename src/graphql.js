@@ -77,17 +77,11 @@ app.use(body())
 app.use(
   mount(
     '/graphql',
-    graphqlKoa(async request => {
-      const start = Date.now()
-      const extensions = ({ document, variables, operationName, result }) => ({
-        duration: Date.now() - start
-      })
-      return { schema, extensions }
-    })
+    graphqlKoa({ schema, tracing: true })
   )
 )
 
-// Image proxy so we can get pictures
+// egallery proxy so we can get pictures
 app.use(
   mount(
     '/egallery',
