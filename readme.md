@@ -44,6 +44,19 @@ Right now this is a graphql endpoint, that can
 }
 ```
 
+* proxy egallery images:
+
+```bash
+# grab the url of an image from the graphql api
+$ graphqlResponse=$(curl http://localhost:4000/graphql -H 'content-type: application/json' -d '{"query": "{ objects(ids: [123]) { raw { ... on EmuseumObject { primaryMedia { value } } } } }"}')
+# extract out the image url
+$ primaryMedia=$(echo $graphqlResponse | jq -r '.data.objects[0].raw.primaryMedia.value')
+# grab the latest image through the proxy
+curl http://localhost:4000/egallery/$primaryMedia -o 123.jpg
+# open the image
+open 123.jpg
+```
+
 * query a test endpoint
 
 ```graphql

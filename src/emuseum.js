@@ -18,12 +18,16 @@ module.exports = ({ emuseumKey }) => {
         const {
           id: { value: id },
           title: { value: title },
-          primaryMaker: { value: maker },
           medium: { value: medium },
           classification: { value: classification },
           creditline: { value: creditline },
-          dimensions: { value: dimensions }
+          dimensions: { value: dimensions },
+          primaryMaker,
+          people
         } = raw
+
+        let maker = primaryMaker && primaryMaker.value
+        maker = maker || people && people.value
 
         return {
           id,
