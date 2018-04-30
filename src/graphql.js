@@ -2,7 +2,8 @@ const Koa = require('koa')
 const mount = require('koa-mount')
 const cors = require('@koa/cors')
 const proxy = require('koa-better-http-proxy')
-const graphqlHTTP = require('koa-graphql')
+const body = require('koa-bodyparser')
+const { graphqlKoa } = require('apollo-server-koa')
 const koaPlayground = require('graphql-playground-middleware-koa').default
 const voyager = require('graphql-voyager/middleware').koa
 
@@ -50,11 +51,12 @@ const rootValue = {
 }
 
 app.use(cors())
+app.use(body())
 
 app.use(
   mount(
     '/graphql',
-    graphqlHTTP(async request => {
+    graphqlKoa(async request => {
       const start = Date.now()
       const extensions = ({ document, variables, operationName, result }) => ({
         duration: Date.now() - start

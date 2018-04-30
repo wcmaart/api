@@ -7,7 +7,5 @@ module.exports = {
   XML_READ_ERROR: new Error(
     'Error reading xml, make sure it exists and you have permissions?'
   ),
-  XML_PARSE_ERROR: new Error(
-    'Error parsing xml, make sure it is utf8?'
-  )
+  XML_PARSE_ERROR: new Error('Error parsing xml, make sure it is utf8?')
 }

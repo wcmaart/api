@@ -7,7 +7,7 @@ module.exports = ({ xmlPath }) => {
   const options = {
     explicitArray: false,
     trim: true,
-    valueProcessors: [ parseNumbers ]
+    valueProcessors: [parseNumbers]
   }
 
   let db
@@ -46,6 +46,12 @@ module.exports = ({ xmlPath }) => {
           histObjXrefs
         } = rawEvent
 
+        /*
+        const histObjIds = histObjXrefs.map(({ObjectId}) => ObjectId)
+        console.dir(parent)
+        objects = parent.getObjects({ ids: histObjIds })
+        */
+
         const event = {
           eventId,
           eventName,
@@ -55,8 +61,7 @@ module.exports = ({ xmlPath }) => {
           courseNumber: courseNbr,
           institution,
           Description,
-          startDate: new Date(startDate),
-          objects: histObjXrefs
+          startDate: new Date(startDate)
         }
         return event
       })
@@ -64,6 +69,6 @@ module.exports = ({ xmlPath }) => {
     },
     getRawEvents ({ ids }) {
       return ids.map(id => db.get(parseInt(id)))
-    },
+    }
   }
 }
