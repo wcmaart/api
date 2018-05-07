@@ -2,7 +2,7 @@ module.exports = ({ emuseumKey }) => {
   const fetch = require('node-fetch')
   const { MISSING_EMUSEUM_KEY } = require('./errors.js')
 
-  const parseRawObject = (raw) => {
+  const parseRawObject = raw => {
     let {
       id: { value: id },
       title: { value: title },
@@ -46,17 +46,16 @@ module.exports = ({ emuseumKey }) => {
 
   return {
     async getObjects ({ ids }) {
-      let rawObjects;
+      let rawObjects
 
       if (!ids) {
         rawObjects = await this.getRawObjectsAll()
-      }
-      else {
+      } else {
         rawObjects = await this.getRawObjects({ ids })
       }
 
       const objects = rawObjects.map(raw => {
-        return parseRawObject(raw);
+        return parseRawObject(raw)
       })
 
       return objects
