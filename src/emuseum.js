@@ -4,8 +4,8 @@ module.exports = ({ emuseumKey }) => {
 
   const parseRawObject = raw => {
     let {
-      id: { value: id },
-      title: { value: title },
+      id,
+      title,
       medium,
       classification,
       creditline,
@@ -15,6 +15,8 @@ module.exports = ({ emuseumKey }) => {
       people
     } = raw
 
+    id = id && id.value
+    title = title && title.value
     medium = medium && medium.value
     primaryMedia = primaryMedia && primaryMedia.value
     classification = classification && classification.value
@@ -49,16 +51,13 @@ module.exports = ({ emuseumKey }) => {
       let rawObjects
 
       if (!ids) {
+        // todo: add pagination. This actually returns the first page of all the objects
         rawObjects = await this.getRawObjectsAll()
       } else {
         rawObjects = await this.getRawObjects({ ids })
       }
 
-      const objects = rawObjects.map(raw => {
-        return parseRawObject(raw)
-      })
-
-      return objects
+      return rawObjects.map(parseRawObject)
     },
     async getRawObjects ({ ids }) {
       if (!emuseumKey) throw MISSING_EMUSEUM_KEY
