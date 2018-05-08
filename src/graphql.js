@@ -28,7 +28,9 @@ const typeDefs = require('fs')
   .toString()
 
 const db = {
-  there: `General Kenobi!`
+  hello: {
+    there: `General Kenobi!`
+  }
 }
 
 const objectResolver = async ({ ids, filter }) => {
