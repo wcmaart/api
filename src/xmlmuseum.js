@@ -56,7 +56,7 @@ module.exports = ({ xmlPath }) => {
           institution,
           Description,
           startDate: new Date(startDate),
-          HistObjXIDs: HistObjXrefs.map(({ObjectID}) => ObjectID)
+          HistObjXIDs: HistObjXrefs.map(({ ObjectID }) => ObjectID)
         }
         return event
       })

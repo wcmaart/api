@@ -17,10 +17,10 @@ module.exports = ({ csvPath }) => {
       'String', // culture
       'String', // period
       'String', // creation_date
-      'String', //creation_date_earliest
+      'String', // creation_date_earliest
       'String', // creation_date_latest
       'String', // accession_date
-      'String', //source_name
+      'String', // source_name
       'String', // object_name
       'String', // medium
       'String', // dimensions
@@ -32,9 +32,13 @@ module.exports = ({ csvPath }) => {
       'String', // signed
       'String', // marks
       'String', // inscriptions
-      'String'  // filename
+      'String' // filename
     ]
-    const csv = CSV.parse(collection, { header: true, lineDelimiter: '\r', cast })
+    const csv = CSV.parse(collection, {
+      header: true,
+      lineDelimiter: '\r',
+      cast
+    })
     db = new Map(csv.map(object => [object.id, object]))
   } catch (e) {
     console.error(CSV_READ_ERROR.message)

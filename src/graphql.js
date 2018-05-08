@@ -31,15 +31,17 @@ const db = {
   there: `General Kenobi!`
 }
 
-const objectResolver = async ({ids, filter}) => {
+const objectResolver = async ({ ids, filter }) => {
   let objects
   try {
-    objects = await emuseum.getObjects({ids})
+    objects = await emuseum.getObjects({ ids })
   } catch (e) {
-    objects = csvmuseum.getObjects({ids})
+    objects = csvmuseum.getObjects({ ids })
   }
 
-  if (filter) return objects.filter(({title}) => title && title.includes(filter))
+  if (filter) {
+    return objects.filter(({ title }) => title && title.includes(filter))
+  }
 
   return objects
 }
@@ -66,7 +68,7 @@ const resolvers = {
     }
   },
   Event: {
-    objects ({HistObjXIDs}, args) {
+    objects ({ HistObjXIDs }, args) {
       return objectResolver({ ids: HistObjXIDs, ...args })
     }
   },
@@ -87,12 +89,7 @@ app.use(cors())
 app.use(body())
 
 // Api endpoint for graphql
-app.use(
-  mount(
-    '/graphql',
-    graphqlKoa({ schema, tracing: true })
-  )
-)
+app.use(mount('/graphql', graphqlKoa({ schema, tracing: true })))
 
 // egallery proxy so we can get pictures
 app.use(
