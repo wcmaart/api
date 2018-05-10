@@ -3,4 +3,4 @@
 	url = https://github.com/wcmaart/collection.git
 [submodule "thehallaframe"]
 	path = thehallaframe
-	url = git@github.com:jedahan/thehallaframe.git
+	url = https://github.com/jedahan/thehallaframe.git
