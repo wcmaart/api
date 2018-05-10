@@ -19,8 +19,9 @@ const emuseum = require('./emuseum.js')({ emuseumKey })
 const csvPath = 'data/wcma-collection.csv'
 const csvmuseum = require('./csvmuseum')({ csvPath })
 
-const xmlPath = 'EventsWithObjects_4_30_18.xml'
-const xmlmuseum = require('./xmlmuseum')({ xmlPath })
+// todo: add this back later
+// const xmlPath = 'EventsWithObjects_4_30_18.xml'
+// const xmlmuseum = require('./xmlmuseum')({ xmlPath })
 
 const schemaPath = `${__dirname}/schema.graphql`
 const typeDefs = require('fs')
@@ -52,9 +53,10 @@ const resolvers = {
   Query: {
     hello: () => db.hello,
     objects: (_, args) => objectResolver(args),
-    events: async (_, args) => {
-      return xmlmuseum.getEvents(args)
-    }
+    // todo: add this back later
+    // events: async (_, args) => {
+    //   return xmlmuseum.getEvents(args)
+    // }
   },
   Mutation: {
     setHello: (_, { hello }) => {
