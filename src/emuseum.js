@@ -40,19 +40,19 @@ module.exports = ({ emuseumKey }) => {
   if (!emuseumKey) {
     console.error(MISSING_EMUSEUM_KEY.message)
     return {
-      async getObjects ({ ids }) {
+      async getObjects ({ ids, paginationIdx }) {
         throw MISSING_EMUSEUM_KEY
       }
     }
   }
 
   return {
-    async getObjects ({ ids }) {
+    async getObjects ({ ids, paginationIdx }) {
       let rawObjects
 
       if (!ids) {
         // todo: add pagination. This actually returns the first page of all the objects
-        rawObjects = await this.getRawObjectsAll()
+        rawObjects = await this.getRawObjectsAll({ paginationIdx })
       } else {
         rawObjects = await this.getRawObjects({ ids })
       }
@@ -72,10 +72,11 @@ module.exports = ({ emuseumKey }) => {
       )
       return response
     },
-    async getRawObjectsAll () {
+    async getRawObjectsAll ({ paginationIdx }) {
       if (!emuseumKey) throw MISSING_EMUSEUM_KEY
 
-      const uri = `http://egallery.williams.edu/objects/json?key=${emuseumKey}`
+      paginationIdx = paginationIdx || 1;
+      const uri = `http://egallery.williams.edu/objects/json?key=${emuseumKey}&page=${paginationIdx}`
 
       return await fetch(uri)
         .then(res => res.json())

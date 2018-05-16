@@ -34,10 +34,10 @@ const db = {
   }
 }
 
-const objectResolver = async ({ ids, filter }) => {
+const objectResolver = async ({ ids, paginationIdx, filter }) => {
   let objects
   try {
-    objects = await emuseum.getObjects({ ids })
+    objects = await emuseum.getObjects({ ids, paginationIdx })
   } catch (e) {
     objects = csvmuseum.getObjects({ ids })
   }
