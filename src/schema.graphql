@@ -51,7 +51,7 @@ type Query {
   hello: Hello,
 
   # things museums often collect
-  objects(ids: [ID!], filter: String): [Object]
+  objects(ids: [ID!], paginationIdx: Int, filter: String): [Object]
 
   # images, audio, video, documents
   medias(ids: [ID!]): [Media]
