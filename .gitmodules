@@ -1,6 +1,0 @@
-[submodule "data"]
-	path = data
-	url = https://github.com/wcmaart/collection.git
-[submodule "thehallaframe"]
-	path = thehallaframe
-	url = https://github.com/jedahan/thehallaframe.git

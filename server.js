@@ -1,0 +1,246 @@
+/*
+ * Welcome to the server.js file, this file. This file is written in
+ * ES6 and is expected to run in node.
+ *
+ * There is a lot of scripting at the top of this file, most of which
+ * is to make sure the user has completed all the steps needed to
+ * actually run the dashboard properly. This will be checking for
+ * things like `yarn install` and the usual stuff having been run.
+ *
+ * You'll see!
+ */
+const fs = require('fs')
+const path = require('path')
+
+const rootDir = __dirname
+
+//  Before we do anything else we need to check that the checking checks
+console.log('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+console.log('Making sure we are up to date, please wait...')
+const spawnSync = require('child_process').spawnSync
+const yarn = spawnSync('yarn', ['install'])
+console.log(yarn.stdout.toString())
+
+const colours = require('colors')
+const prompt = require('prompt-sync')()
+
+colours.setTheme({
+  info: 'green',
+  data: 'grey',
+  help: 'cyan',
+  warn: 'yellow',
+  debug: 'blue',
+  error: 'red',
+  alert: 'magenta'
+})
+
+//  Let us know where the app is being run from
+console.log(`server.js is being run from this directory: ${process.cwd()}`.help)
+console.log(`server.js exists in this directory: ${rootDir}`.help)
+
+/*
+ * Check to see if we have been passed in command line parameters to define
+ * the port, host, environment and if we want to skip any build steps
+ */
+const argOptionDefinitions = [{
+    name: 'port',
+    alias: 'p',
+    type: Number
+  },
+  {
+    name: 'host',
+    alias: 'h',
+    type: String
+  },
+  {
+    name: 'env',
+    alias: 'e',
+    type: String
+  },
+  {
+    name: 'skipBuild',
+    alias: 's',
+    type: Boolean,
+    defaultOption: false
+  },
+  {
+    name: 'skipOpen',
+    type: Boolean
+  }
+]
+const commandLineArgs = require('command-line-args')
+const argOptions = commandLineArgs(argOptionDefinitions)
+
+if ('port' in argOptions || 'host' in argOptions || 'env' in argOptions) {
+  let port = 4000
+  let host = 'localhost'
+  let nodeEnv = 'development'
+  if ('port' in argOptions) port = argOptions.port
+  if ('host' in argOptions) host = argOptions.host
+  if ('env' in argOptions) nodeEnv = argOptions.env
+  const env = `# SERVER DATA
+PORT=${port}
+HOST=${host}
+NODE_ENV=${nodeEnv}
+`
+  fs.writeFileSync(path.join(rootDir, '.env'), env, 'utf-8')
+}
+
+//  Here we are managing if we are going to skip the build step
+//  we'll want to do that if we are forcing a restart of the app.
+//  We force a restart if we detect files changing, but only on
+//  dev. We will need to set a flag to tell the difference between
+//  a forced exit we want and a crash
+let skipBuild = false
+global.doRestart = false
+if ('skipBuild' in argOptions && argOptions.skipBuild === true) {
+  skipBuild = true
+}
+
+/*
+ * Check to see if the `.env` file exists, if not we need ask the user questions
+ * to create it
+ */
+
+if (!fs.existsSync(path.join(rootDir, '.env'))) {
+  console.log(
+    'We need some first time information to get things up and running.'.info
+  )
+
+  process.stdout.write(`question `.data)
+  let port = prompt('port number (4000): ')
+
+  if (port === '') port = 4000
+  port = parseInt(port)
+  if (isNaN(port) || port < 0 || port > 49151) {
+    console.log('Port must be between 0-49151, setting port to 4000'.alert)
+    port = 4000
+  }
+
+  process.stdout.write(`question `.data)
+  let host = prompt('host (localhost): ')
+
+  if (host === '') host = 'localhost'
+
+  process.stdout.write(`question `.data)
+  let nodeEnv = prompt(
+    'NODE_ENV [development|staging|production] (development): '
+  )
+  if (nodeEnv === '') nodeEnv = 'development'
+
+  const env = `# SERVER DATA
+PORT=${port}
+HOST=${host}
+NODE_ENV=${nodeEnv}
+`
+  fs.writeFileSync(path.join(rootDir, '.env'), env, 'utf-8')
+}
+
+//  Now we can actually require it
+require('dotenv').config()
+
+fs.existsSync(path.join(rootDir, '/app')) || fs.mkdirSync(path.join(rootDir, '/app'))
+fs.existsSync(path.join(rootDir, '/src')) || fs.mkdirSync(path.join(rootDir, '/src'))
+fs.existsSync(path.join(rootDir, '/src/public')) || fs.mkdirSync(path.join(rootDir, '/src/public'))
+
+// ########################################################################
+/*
+ * STEP TWO
+ *
+ * We need to show the user a webpage, for this to work we need to make
+ * sure the code is build, the CSS is compiled and the templates copied
+ * over.
+ *
+ * We will build, compile and copy each time the service starts
+ *
+ */
+
+if (skipBuild === false) {
+  // Copy template files
+  spawnSync('npx', [
+    'babel',
+    'src/templates',
+    '--out-dir',
+    'app/templates',
+    '--copy-files'
+  ])
+
+  // Copy template files
+  spawnSync('npx', [
+    'babel',
+    'src/public/images',
+    '--out-dir',
+    'app/public/images',
+    '--copy-files'
+  ])
+
+  // Copy naked css files
+  spawnSync('npx', [
+    'babel',
+    'src/public/css',
+    '--out-dir',
+    'app/public/css',
+    '--copy-files'
+  ])
+
+  //  Compile node files
+  spawnSync('npx', ['babel', 'src', '--out-dir', 'app'])
+
+  //  Copy over all the png, xml and ico files for the icons that sit in
+  //  the public dir
+  const moveFiles = fs
+    .readdirSync(path.join(rootDir, '/src/public'))
+    .filter(file => {
+      return file.split('.').length > 1
+    })
+    .filter(file => {
+      let extension = file.split('.')
+      extension = extension.pop()
+      return ['png', 'xml', 'ico', 'json'].includes(extension)
+    })
+  moveFiles.forEach(file => {
+    const source = path.join(rootDir, '/src/public', file)
+    const target = path.join(rootDir, '/app/public', file)
+    fs.copyFileSync(source, target)
+  })
+}
+
+// ########################################################################
+/*
+ * STEP THREE
+ *
+ * Compile the CSS
+ *
+ */
+
+if (skipBuild === false) {
+  if (!fs.existsSync(path.join(rootDir, '/app/public'))) {
+    fs.mkdirSync(path.join(rootDir, '/app/public'))
+  }
+  if (!fs.existsSync(path.join(rootDir, '/app/public/css'))) {
+    fs.mkdirSync(path.join(rootDir, '/app/public/css'))
+  }
+  const sass = require('node-sass')
+  let sassResult = ''
+  if (process.env.NODE_ENV === 'development') {
+    sassResult = sass.renderSync({
+      file: path.join(rootDir, '/src/sass/main.scss'),
+      outputStyle: 'compact',
+      outFile: path.join(rootDir, '/app/public/css/main.css'),
+      sourceMap: true
+    })
+    fs.writeFileSync(
+      path.join(rootDir, '/app/public/css/main.css.map'),
+      sassResult.map
+    )
+  } else {
+    sassResult = sass.renderSync({
+      file: path.join(rootDir, '/src/sass/main.scss'),
+      outputStyle: 'compressed'
+    })
+  }
+  fs.writeFileSync(
+    path.join(rootDir, '/app/public/css/main.css'),
+    sassResult.css
+  )
+}
