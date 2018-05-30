@@ -4,6 +4,12 @@ const router = express.Router()
 const User = require('../classes/user')
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn()
 const Config = require('../classes/config')
+const expressGraphql = require('express-graphql')
+const {
+  buildSchema
+} = require('graphql')
+const schema = require('../modules/schema')
+const queries = require('../modules/queries')
 
 // Break out all the seperate parts of the site
 /* eslint-disable import/no-unresolved */
@@ -86,8 +92,38 @@ router.use(function (req, res, next) {
     req.templateValues.NODE_ENV = process.env.NODE_ENV
     return res.render('config/auth0', req.templateValues)
   }
+  console.log('Boink!')
   next()
 })
+
+//  This is the resolver
+const root = {
+  message: () => {
+    return `Hello world: ${parseInt(Math.random() * 100, 10)}`
+  },
+  funky: (args) => {
+    console.log(args)
+    return {
+      poop: 23,
+      kittens: 'yes!'
+    }
+  },
+  objects: (args) => {
+    return queries.getObjects(args)
+  }
+}
+
+router.use('/graphql', expressGraphql({
+  schema: buildSchema(schema.schema),
+  rootValue: root,
+  graphiql: false
+}))
+
+router.use('/playground', expressGraphql({
+  schema: buildSchema(schema.schema),
+  rootValue: root,
+  graphiql: true
+}))
 
 // ############################################################################
 //
