@@ -92,24 +92,31 @@ router.use(function (req, res, next) {
     req.templateValues.NODE_ENV = process.env.NODE_ENV
     return res.render('config/auth0', req.templateValues)
   }
-  console.log('Boink!')
   next()
 })
 
 //  This is the resolver
 const root = {
-  message: () => {
-    return `Hello world: ${parseInt(Math.random() * 100, 10)}`
-  },
-  funky: (args) => {
-    console.log(args)
-    return {
-      poop: 23,
-      kittens: 'yes!'
-    }
+  hello: () => {
+    return `world`
   },
   objects: (args) => {
     return queries.getObjects(args)
+  },
+  object: (args) => {
+    return queries.getObject(args)
+  },
+  objectNames: (args) => {
+    return queries.getObjectNames(args)
+  },
+  makers: (args) => {
+    return queries.getMakers(args)
+  },
+  periods: (args) => {
+    return queries.getPeriods(args)
+  },
+  mediums: (args) => {
+    return queries.getMediums(args)
   }
 }
 

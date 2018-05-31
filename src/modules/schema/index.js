@@ -1,9 +1,22 @@
 exports.schema = `
 type Query {
-  message: String
-  funky(id: Int, yup: String): Funkyness
-  objects(page: Int, per_page: Int): [Object]
+  hello: String
+  objects(
+    page: Int,
+    per_page: Int,
+    object_name: String,
+    maker: String,
+    period: String,
+    medium: String,
+    title: String
+  ): [Object]
+  object(id: String!): Object
+  objectNames(page: Int, per_page: Int): [ObjectName]
+  makers(page: Int, per_page: Int): [Maker]
+  periods(page: Int, per_page: Int): [Period]
+  mediums(page: Int, per_page: Int): [Medium]
 }
+
 type Object {
   id: String
   accession_number: String
@@ -55,8 +68,29 @@ type Remote {
   height: Int
   format: String
 }
-type Funkyness {
-  poop: Int
-  kittens: String
+
+type ObjectName {
+  id: Int
+  title: String
+  count: Int
 }
+
+type Maker {
+  id: Int
+  title: String
+  count: Int
+}
+
+type Period {
+  id: Int
+  title: String
+  count: Int
+}
+
+type Medium {
+  id: Int
+  title: String
+  count: Int
+}
+
 `
