@@ -1,7 +1,9 @@
 node_modules
-*log
 .vscode
 .next
 .DS_Store
-*xml
 .env
+/app
+/.pid
+/sessions
+/config.json
