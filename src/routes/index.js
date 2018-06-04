@@ -5,6 +5,7 @@ const User = require('../classes/user')
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn()
 const Config = require('../classes/config')
 const expressGraphql = require('express-graphql')
+const cors = require('cors');
 const {
   buildSchema
 } = require('graphql')
@@ -16,6 +17,25 @@ const queries = require('../modules/queries')
 const config = require('./config')
 const main = require('./main')
 const status = require('./status')
+
+//Note: '*' will whitelist all domains.
+// If we remove the auth, we may want to lock this down.
+const coorsAllowedOrigin = '*';
+
+// bypass auth for preflight requests
+// we need this because the apolloClient uses fetch which triggers a preflight request
+router.options('/*', function(req, res, next){
+  res.header('Access-Control-Allow-Origin', coorsAllowedOrigin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.sendStatus(200)
+});
+
+// enable cors. "credentials: true" is needed to pass auth through cors.
+router.use(cors({
+  origin: coorsAllowedOrigin,
+}));
+
 
 // ############################################################################
 //
