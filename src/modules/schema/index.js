@@ -10,7 +10,7 @@ type Query {
     medium: String,
     title: String
   ): [Object]
-  object(id: String!): Object
+  object(id: Int!): Object
   objectNames(page: Int, per_page: Int): [ObjectName]
   makers(page: Int, per_page: Int): [Maker]
   periods(page: Int, per_page: Int): [Period]
@@ -18,7 +18,7 @@ type Query {
 }
 
 type Object {
-  id: String
+  id: Int
   accession_number: String
   title: String
   maker: String
