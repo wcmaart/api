@@ -73,24 +73,32 @@ type ObjectName {
   id: Int
   title: String
   count: Int
+  images: [Remote]
+  keyImage: Remote
 }
 
 type Maker {
   id: Int
   title: String
   count: Int
+  images: [Remote]
+  keyImage: Remote
 }
 
 type Period {
   id: Int
   title: String
   count: Int
+  images: [Remote]
+  keyImage: Remote
 }
 
 type Medium {
   id: Int
   title: String
   count: Int
+  images: [Remote]
+  keyImage: Remote
 }
 
 `
