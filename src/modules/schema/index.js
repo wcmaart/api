@@ -11,10 +11,15 @@ type Query {
     title: String
   ): [Object]
   object(id: Int!): Object
-  objectNames(page: Int, per_page: Int): [ObjectName]
-  makers(page: Int, per_page: Int): [Maker]
-  periods(page: Int, per_page: Int): [Period]
-  mediums(page: Int, per_page: Int): [Medium]
+  objectNames(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [ObjectName]
+  makers(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Maker]
+  periods(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Period]
+  mediums(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Medium]
+}
+
+type Sort {
+  field: String
+  direction: String
 }
 
 type Object {

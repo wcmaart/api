@@ -54,11 +54,27 @@ const getItems = async (args, index) => {
   //  Sort by count if the index is one of these
   const sortIfIndex = ['object_types_wcma', 'object_makers_wcma', 'object_periods_wcma', 'object_materials_wcma']
   if (sortIfIndex.includes(index)) {
-    body.sort = [{
-      count: {
-        order: 'desc'
+    //  Check to see if we have been passed valid sort fields values, if we have
+    //  then use that for a sort. Otherwise use a default one
+    const validFields = ['count', 'title', 'id']
+    const keywordFields = ['title']
+    const validSorts = ['asc', 'desc']
+    if ('sort_field' in args && validFields.includes(args.sort_field.toLowerCase()) && 'sort' in args && (validSorts.includes(args.sort.toLowerCase()))) {
+      //  To actually sort on a title we need to really sort on `title.keyword`
+      let sortField = args.sort_field
+      if (keywordFields.includes(sortField)) sortField = `${sortField}.keyword`
+      const sortObj = {}
+      sortObj[sortField] = {
+        order: args.sort
       }
-    }]
+      body.sort = [sortObj]
+    } else {
+      body.sort = [{
+        id: {
+          order: 'asc'
+        }
+      }]
+    }
   }
 
   if (index === 'objects_wcma') {
