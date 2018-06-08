@@ -143,16 +143,19 @@ const getItems = async (args, index) => {
   }).catch((err) => {
     console.error(err)
   })
+
   const records = objects.hits.hits.map((hit) => hit._source).map((record) => {
     //  Because of the way ES returns the items as an array of single arrays
     //  we are popping them out into a single array, i.e.
     //  [[x],[x],[x],[x],[x]] => [x,x,x,x,x]
-    record.images = record.images.map((image) => {
-      if (Array.isArray(image)) {
-        return image[0]
-      }
-      return image
-    })
+    if ('images' in record) {
+      record.images = record.images.map((image) => {
+        if (Array.isArray(image)) {
+          return image[0]
+        }
+        return image
+      })
+    }
     return record
   })
   return records
