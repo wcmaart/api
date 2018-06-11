@@ -8,7 +8,10 @@ type Query {
     maker: String,
     period: String,
     medium: String,
-    title: String
+    title: String,
+    color: String,
+    color_threshold: Float = 0.75
+    color_source: String = "google"
   ): [Object]
   object(id: Int!): Object
   objectNames(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [ObjectName]
