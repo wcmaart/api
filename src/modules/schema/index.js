@@ -62,7 +62,9 @@ type Object {
   orientation_p_l_s: String
   copyright_holder: String
   remote: Remote
+  color: ColorInfo
 }
+
 type Remote {
   status: String
   original_image_id: String
@@ -72,6 +74,21 @@ type Remote {
   width: Int
   height: Int
   format: String
+}
+
+type ColorInfo {
+  predominant: [ColorValue]
+  search: Search
+}
+
+type Search {
+  google: [ColorValue]
+  cloudinary: [ColorValue]
+}
+
+type ColorValue {
+  color: String
+  value: Float
 }
 
 type ObjectName {
