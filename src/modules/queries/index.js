@@ -126,7 +126,8 @@ const getItems = async (args, index) => {
       ('maker' in args && args.maker !== '') ||
       ('period' in args && args.period !== '') ||
       ('title' in args && args.title !== '') ||
-      ('medium' in args && args.medium !== '')
+      ('medium' in args && args.medium !== '') ||
+      ('color' in args && args.color !== '')
     ) {
       const must = []
 
@@ -172,6 +173,16 @@ const getItems = async (args, index) => {
         })
       }
 
+      if ('color' in args && args.color !== '') {
+        const colorFilter = {}
+        colorFilter[`color.search.google.${args.color}`] = {
+          gte: args.color_threshold
+        }
+        must.push({
+          range: colorFilter
+        })
+      }
+
       body.query = {
         bool: {
           must
@@ -179,6 +190,8 @@ const getItems = async (args, index) => {
       }
     }
   }
+
+  console.log(body)
 
   const objects = await esclient.search({
     index,
