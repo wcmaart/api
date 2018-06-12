@@ -18,6 +18,7 @@ type Query {
   makers(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Maker]
   periods(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Period]
   mediums(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Medium]
+  events(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Event]
 }
 
 type Sort {
@@ -126,4 +127,17 @@ type Medium {
   keyImage: Remote
 }
 
+type Event {
+  id: Int
+  title: String
+  planningNotes: String
+  beginISODate: String
+  beginDate: Int
+  isInHouse: Boolean
+  objects: [Int]
+  curNotes: String
+  endISODate: String
+  endDate: Int
+  keyImage: Remote
+}
 `

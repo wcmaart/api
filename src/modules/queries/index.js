@@ -238,8 +238,6 @@ const getItems = async (args, index) => {
     }
   }
 
-  console.log(body.query.bool.must)
-
   const objects = await esclient.search({
     index,
     body
@@ -263,6 +261,75 @@ const getItems = async (args, index) => {
   })
 
   return records.map((record) => cleanObjectColor(record))
+}
+
+exports.getEvents = async (args) => {
+  const config = new Config()
+
+  //  Grab the elastic search config details
+  const elasticsearchConfig = config.get('elasticsearch')
+  if (elasticsearchConfig === null) {
+    return []
+  }
+
+  //  Set up the client
+  const esclient = new elasticsearch.Client(elasticsearchConfig)
+  const page = getPage(args)
+  const perPage = getPerPage(args)
+  const body = {
+    from: page * perPage,
+    size: perPage
+  }
+
+  //  Check to see if we have been passed valid sort fields values, if we have
+  //  then use that for a sort. Otherwise use a default one
+  const validFields = ['title', 'id', 'beginisodate', 'endisodate']
+  const keywordFields = ['ExhTitle']
+  const validSorts = ['asc', 'desc']
+  if ('sort_field' in args && validFields.includes(args.sort_field.toLowerCase()) && 'sort' in args && (validSorts.includes(args.sort.toLowerCase()))) {
+    //  To actually sort on a title we need to really sort on `ExhTitle.keyword`
+    let sortField = args.sort_field
+    if (sortField === 'title') sortField = 'ExhTitle'
+    if (sortField === 'id') sortField = 'ExhibitionID'
+    if (sortField === 'beginISODate') sortField = 'BeginISODate'
+    if (sortField === 'endISODate') sortField = 'EndISODate'
+    if (keywordFields.includes(sortField)) sortField = `${sortField}.keyword`
+    console.log('sortField: ', sortField)
+    const sortObj = {}
+    sortObj[sortField] = {
+      order: args.sort
+    }
+    body.sort = [sortObj]
+  } else {
+    body.sort = [{
+      ExhibitionID: {
+        order: 'asc'
+      }
+    }]
+  }
+
+  const events = await esclient.search({
+    index: 'events_wcma',
+    body
+  }).catch((err) => {
+    console.error(err)
+  })
+  const records = events.hits.hits.map((hit) => hit._source).map((record) => {
+    record.id = record.ExhibitionID
+    record.title = record.ExhTitle
+    record.planningNotes = record.PlanningNotes
+    record.curNotes = record.CurNotes
+    record.isInHouse = record.IsInHouse
+    record.objects = record.ExhObjXrefs
+    record.beginISODate = record.BeginISODate
+    record.endISODate = record.EndISODate
+    record.beginDate = parseInt(new Date(record.BeginISODate).getTime() / 1000, 10)
+    record.endDate = parseInt(new Date(record.EndISODate).getTime() / 1000, 10)
+    if (record.beginDate < -2147483648 || record.beginDate > 2147483648) record.beginDate = null
+    if (record.endDate < -2147483648 || record.endDate > 2147483648) record.endDate = null
+    return record
+  })
+  return records
 }
 
 exports.getObjects = async (args) => {
