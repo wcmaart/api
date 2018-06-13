@@ -127,7 +127,8 @@ const getItems = async (args, index) => {
       ('period' in args && args.period !== '') ||
       ('title' in args && args.title !== '') ||
       ('medium' in args && args.medium !== '') ||
-      ('color' in args && args.color !== '')
+      ('color' in args && args.color !== '') ||
+      ('ids' in args && Array.isArray(args.ids))
     ) {
       const must = []
 
@@ -169,6 +170,14 @@ const getItems = async (args, index) => {
         must.push({
           match: {
             title: args.title
+          }
+        })
+      }
+
+      if ('ids' in args && Array.isArray(args.ids)) {
+        must.push({
+          terms: {
+            id: args.ids
           }
         })
       }
@@ -263,6 +272,25 @@ const getItems = async (args, index) => {
   return records.map((record) => cleanObjectColor(record))
 }
 
+const cleanEvent = (event) => {
+  const newEvent = {}
+
+  newEvent.id = event.ExhibitionID
+  newEvent.title = event.ExhTitle
+  newEvent.planningNotes = event.PlanningNotes
+  newEvent.curNotes = event.CurNotes
+  newEvent.isInHouse = event.IsInHouse
+  newEvent.objects = event.ExhObjXrefs
+  newEvent.beginISODate = event.BeginISODate
+  newEvent.endISODate = event.EndISODate
+  newEvent.beginDate = parseInt(new Date(event.BeginISODate).getTime() / 1000, 10)
+  newEvent.endDate = parseInt(new Date(event.EndISODate).getTime() / 1000, 10)
+  if (newEvent.beginDate < -2147483648 || newEvent.beginDate > 2147483648) newEvent.beginDate = null
+  if (newEvent.endDate < -2147483648 || newEvent.endDate > 2147483648) newEvent.endDate = null
+
+  return newEvent
+}
+
 exports.getEvents = async (args) => {
   const config = new Config()
 
@@ -294,7 +322,7 @@ exports.getEvents = async (args) => {
     if (sortField === 'beginISODate') sortField = 'BeginISODate'
     if (sortField === 'endISODate') sortField = 'EndISODate'
     if (keywordFields.includes(sortField)) sortField = `${sortField}.keyword`
-    console.log('sortField: ', sortField)
+
     const sortObj = {}
     sortObj[sortField] = {
       order: args.sort
@@ -315,21 +343,44 @@ exports.getEvents = async (args) => {
     console.error(err)
   })
   const records = events.hits.hits.map((hit) => hit._source).map((record) => {
-    record.id = record.ExhibitionID
-    record.title = record.ExhTitle
-    record.planningNotes = record.PlanningNotes
-    record.curNotes = record.CurNotes
-    record.isInHouse = record.IsInHouse
-    record.objects = record.ExhObjXrefs
-    record.beginISODate = record.BeginISODate
-    record.endISODate = record.EndISODate
-    record.beginDate = parseInt(new Date(record.BeginISODate).getTime() / 1000, 10)
-    record.endDate = parseInt(new Date(record.EndISODate).getTime() / 1000, 10)
-    if (record.beginDate < -2147483648 || record.beginDate > 2147483648) record.beginDate = null
-    if (record.endDate < -2147483648 || record.endDate > 2147483648) record.endDate = null
-    return record
+    return cleanEvent(record)
   })
   return records
+}
+
+exports.getEvent = async (args) => {
+  const config = new Config()
+
+  //  Grab the elastic search config details
+  const elasticsearchConfig = config.get('elasticsearch')
+  if (elasticsearchConfig === null) {
+    return []
+  }
+
+  //  Set up the client
+  const esclient = new elasticsearch.Client(elasticsearchConfig)
+  const id = args.id
+  const index = 'events_wcma'
+  const type = 'event'
+
+  const event = await esclient.get({
+    index,
+    type,
+    id
+  }).catch((err) => {
+    console.error(err)
+  })
+
+  if (event !== undefined && event !== null && 'found' in event && event.found === true) {
+    const newEvent = cleanEvent(event._source)
+    if (newEvent.objects.length > 0) {
+      args.ids = newEvent.objects
+      const objects = await getItems(args, 'objects_wcma')
+      newEvent.objects = objects
+    }
+    return newEvent
+  }
+  return null
 }
 
 exports.getObjects = async (args) => {

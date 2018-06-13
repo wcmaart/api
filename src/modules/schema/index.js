@@ -2,15 +2,15 @@ exports.schema = `
 type Query {
   hello: String
   objects(
-    page: Int,
-    per_page: Int,
-    object_name: String,
-    maker: String,
-    period: String,
-    medium: String,
-    title: String,
-    color: String,
-    color_threshold: Float = 0.75
+    page: Int
+    per_page: Int
+    object_name: String
+    maker: String
+    period: String
+    medium: String
+    title: String
+    color: String
+    color_threshold: Float = 50.0
     color_source: String = "google"
   ): [Object]
   object(id: Int!): Object
@@ -19,6 +19,21 @@ type Query {
   periods(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Period]
   mediums(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Medium]
   events(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Event]
+  event(
+    id: Int!
+    page: Int
+    per_page: Int
+    sort: String = "asc"
+    sort_field: String = "id"
+    object_name: String
+    maker: String
+    period: String
+    medium: String
+    title: String
+    color: String
+    color_threshold: Float = 50.0
+    color_source: String = "google"
+  ): SingleEvent
 }
 
 type Sort {
@@ -140,4 +155,19 @@ type Event {
   endDate: Int
   keyImage: Remote
 }
+
+type SingleEvent {
+  id: Int
+  title: String
+  planningNotes: String
+  beginISODate: String
+  beginDate: Int
+  isInHouse: Boolean
+  objects: [Object]
+  curNotes: String
+  endISODate: String
+  endDate: Int
+  keyImage: Remote
+}
+
 `
