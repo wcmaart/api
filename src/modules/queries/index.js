@@ -428,11 +428,34 @@ exports.getObject = async (args) => {
     type,
     id
   }).catch((err) => {
-    console.error(err)
+    //  Dont log the error if this is a "good" error, i.e. we simple didn't find
+    //  a record, no need to spam the error logs
+    if (!('body' in err && 'found' in err.body && err.body.found === false)) {
+      console.error(err)
+    }
   })
 
   if (object !== undefined && object !== null && 'found' in object && object.found === true) {
     const newObject = cleanObjectColor(object._source)
+
+    //  Now we need to find all the events that this object lives in
+    const body = {
+      query: {
+        query_string: {
+          fields: ['ExhObjXrefs'],
+          query: id
+        }
+      }
+    }
+    const events = await esclient.search({
+      index: 'events_wcma',
+      body
+    }).catch((err) => {
+      console.error(err)
+    })
+    newObject.events = events.hits.hits.map((hit) => hit._source).map((record) => {
+      return cleanEvent(record)
+    })
     return newObject
   }
   return null
