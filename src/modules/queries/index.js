@@ -106,11 +106,14 @@ const getItems = async (args, index) => {
       //  To actually sort on a title we need to really sort on `title.keyword`
       let sortField = args.sort_field
       if (keywordFields.includes(sortField)) sortField = `${sortField}.keyword`
-      const sortObj = {}
-      sortObj[sortField] = {
-        order: args.sort
+      //  For objects we want to actually want to sort by the _id
+      if (index === 'objects_wcma' && sortField !== 'title.keyword') {} else {
+        const sortObj = {}
+        sortObj[sortField] = {
+          order: args.sort
+        }
+        body.sort = [sortObj]
       }
-      body.sort = [sortObj]
     } else {
       body.sort = [{
         id: {
