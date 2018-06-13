@@ -4,6 +4,8 @@ type Query {
   objects(
     page: Int
     per_page: Int
+    sort: String = "asc"
+    sort_field: String = "id"
     object_name: String
     maker: String
     period: String

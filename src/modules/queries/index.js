@@ -95,7 +95,7 @@ const getItems = async (args, index) => {
   }
 
   //  Sort by count if the index is one of these
-  const sortIfIndex = ['object_types_wcma', 'object_makers_wcma', 'object_periods_wcma', 'object_materials_wcma']
+  const sortIfIndex = ['objects_wcma', 'object_types_wcma', 'object_makers_wcma', 'object_periods_wcma', 'object_materials_wcma']
   if (sortIfIndex.includes(index)) {
     //  Check to see if we have been passed valid sort fields values, if we have
     //  then use that for a sort. Otherwise use a default one
