@@ -290,6 +290,7 @@ const cleanEvent = (event) => {
   newEvent.endDate = parseInt(new Date(event.EndISODate).getTime() / 1000, 10)
   if (newEvent.beginDate < -2147483648 || newEvent.beginDate > 2147483648) newEvent.beginDate = null
   if (newEvent.endDate < -2147483648 || newEvent.endDate > 2147483648) newEvent.endDate = null
+  newEvent.keyImage = event.keyImage
 
   return newEvent
 }
