@@ -11,6 +11,7 @@ type Query {
     period: String
     medium: String
     title: String
+    keyword: String
     color: String
     color_threshold: Float = 50.0
     color_source: String = "google"
@@ -46,7 +47,7 @@ type Query {
     courseNbr: String
     description: String
     facultyMember: String
-    objectId: Int
+    objectID: Int
   ): [Event]
   event(id: Int!): Event
 }
@@ -244,6 +245,7 @@ type Event {
   startDay: Int
   dayOfTheWeek: String
   objectID: Int
+  object: SingleObject
   keyImage: Remote
 }
 `

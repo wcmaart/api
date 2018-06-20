@@ -129,6 +129,7 @@ const getItems = async (args, index) => {
       ('maker' in args && args.maker !== '') ||
       ('period' in args && args.period !== '') ||
       ('title' in args && args.title !== '') ||
+      ('keyword' in args && args.keyword !== '') ||
       ('medium' in args && args.medium !== '') ||
       ('color' in args && args.color !== '') ||
       ('ids' in args && Array.isArray(args.ids))
@@ -165,6 +166,17 @@ const getItems = async (args, index) => {
         must.push({
           match: {
             medium: args.medium
+          }
+        })
+      }
+
+      if ('keyword' in args && args.keyword !== '') {
+        must.push({
+          multi_match: {
+            query: args.keyword,
+            type: 'best_fields',
+            fields: ['title', 'maker', 'description', 'credit_line', 'inscription', 'copyright_holder'],
+            operator: 'or'
           }
         })
       }
@@ -342,7 +354,7 @@ exports.getEvents = async (args) => {
     ('courseNbr' in args && args.courseNbr !== '') ||
     ('description' in args && args.description !== '') ||
     ('facultyMember' in args && args.facultyMember !== '') ||
-    ('objectId' in args && args.objectId !== '')
+    ('objectID' in args && args.objectID !== '')
   ) {
     const must = []
 
@@ -388,10 +400,10 @@ exports.getEvents = async (args) => {
       })
     }
 
-    if ('objectId' in args && args.objectId !== '') {
+    if ('objectID' in args && args.objectID !== '') {
       must.push({
         match: {
-          objectId: args.objectId
+          objectID: args.objectID
         }
       })
     }
@@ -413,6 +425,41 @@ exports.getEvents = async (args) => {
     return record
   })
   return records
+}
+
+exports.getEvent = async (args) => {
+  const config = new Config()
+
+  //  Grab the elastic search config details
+  const elasticsearchConfig = config.get('elasticsearch')
+  if (elasticsearchConfig === null) {
+    return []
+  }
+
+  //  Set up the client
+  const esclient = new elasticsearch.Client(elasticsearchConfig)
+  const id = args.id
+  const index = 'events_wcma'
+  const type = 'event'
+
+  const event = await esclient.get({
+    index,
+    type,
+    id: id
+  }).catch((err) => {
+    console.error(err)
+  })
+
+  if (event !== undefined && event !== null && 'found' in event && event.found === true) {
+    const newEvent = event._source
+    if (!isNaN(newEvent.objectID)) {
+      newEvent.object = await getObject({
+        id: newEvent.objectID
+      })
+    }
+    return newEvent
+  }
+  return null
 }
 
 exports.getExhibitions = async (args) => {
@@ -533,7 +580,7 @@ exports.getMediums = async (args) => {
   return records
 }
 
-exports.getObject = async (args) => {
+const getObject = async (args) => {
   const config = new Config()
 
   //  Grab the elastic search config details
@@ -585,3 +632,4 @@ exports.getObject = async (args) => {
   }
   return null
 }
+exports.getObject = getObject

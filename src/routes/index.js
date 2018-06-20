@@ -145,6 +145,9 @@ const root = {
   },
   events: (args) => {
     return queries.getEvents(args)
+  },
+  event: (args) => {
+    return queries.getEvent(args)
   }
 }
 
