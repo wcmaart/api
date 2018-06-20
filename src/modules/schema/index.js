@@ -20,8 +20,8 @@ type Query {
   makers(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Maker]
   periods(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Period]
   mediums(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Medium]
-  events(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Event]
-  event(
+  exhibitions(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Exhibition]
+  exhibition(
     id: Int!
     page: Int
     per_page: Int
@@ -35,7 +35,7 @@ type Query {
     color: String
     color_threshold: Float = 50.0
     color_source: String = "google"
-  ): SingleEvent
+  ): SingleExhibition
 }
 
 type Sort {
@@ -127,7 +127,7 @@ type SingleObject {
   copyright_holder: String
   remote: Remote
   color: ColorInfo
-  events: [Event]
+  exhibitions: [Exhibition]
 }
 
 type Remote {
@@ -188,7 +188,7 @@ type Medium {
   keyImage: Remote
 }
 
-type Event {
+type Exhibition {
   id: Int
   title: String
   planningNotes: String
@@ -202,7 +202,7 @@ type Event {
   keyImage: Remote
 }
 
-type SingleEvent {
+type SingleExhibition {
   id: Int
   title: String
   planningNotes: String

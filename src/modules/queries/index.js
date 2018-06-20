@@ -275,27 +275,27 @@ const getItems = async (args, index) => {
   return records.map((record) => cleanObjectColor(record))
 }
 
-const cleanEvent = (event) => {
-  const newEvent = {}
+const cleanExhibition = (exhibition) => {
+  const newExhibition = {}
 
-  newEvent.id = event.ExhibitionID
-  newEvent.title = event.ExhTitle
-  newEvent.planningNotes = event.PlanningNotes
-  newEvent.curNotes = event.CurNotes
-  newEvent.isInHouse = event.IsInHouse
-  newEvent.objects = event.ExhObjXrefs
-  newEvent.beginISODate = event.BeginISODate
-  newEvent.endISODate = event.EndISODate
-  newEvent.beginDate = parseInt(new Date(event.BeginISODate).getTime() / 1000, 10)
-  newEvent.endDate = parseInt(new Date(event.EndISODate).getTime() / 1000, 10)
-  if (newEvent.beginDate < -2147483648 || newEvent.beginDate > 2147483648) newEvent.beginDate = null
-  if (newEvent.endDate < -2147483648 || newEvent.endDate > 2147483648) newEvent.endDate = null
-  newEvent.keyImage = event.keyImage
+  newExhibition.id = exhibition.ExhibitionID
+  newExhibition.title = exhibition.ExhTitle
+  newExhibition.planningNotes = exhibition.PlanningNotes
+  newExhibition.curNotes = exhibition.CurNotes
+  newExhibition.isInHouse = exhibition.IsInHouse
+  newExhibition.objects = exhibition.ExhObjXrefs
+  newExhibition.beginISODate = exhibition.BeginISODate
+  newExhibition.endISODate = exhibition.EndISODate
+  newExhibition.beginDate = parseInt(new Date(exhibition.BeginISODate).getTime() / 1000, 10)
+  newExhibition.endDate = parseInt(new Date(exhibition.EndISODate).getTime() / 1000, 10)
+  if (newExhibition.beginDate < -2147483648 || newExhibition.beginDate > 2147483648) newExhibition.beginDate = null
+  if (newExhibition.endDate < -2147483648 || newExhibition.endDate > 2147483648) newExhibition.endDate = null
+  newExhibition.keyImage = exhibition.keyImage
 
-  return newEvent
+  return newExhibition
 }
 
-exports.getEvents = async (args) => {
+exports.getExhibitions = async (args) => {
   const config = new Config()
 
   //  Grab the elastic search config details
@@ -340,19 +340,20 @@ exports.getEvents = async (args) => {
     }]
   }
 
-  const events = await esclient.search({
-    index: 'events_wcma',
+  const exhibitions = await esclient.search({
+    index: 'exhibitions_wcma',
     body
   }).catch((err) => {
     console.error(err)
   })
-  const records = events.hits.hits.map((hit) => hit._source).map((record) => {
-    return cleanEvent(record)
+
+  const records = exhibitions.hits.hits.map((hit) => hit._source).map((record) => {
+    return cleanExhibition(record)
   })
   return records
 }
 
-exports.getEvent = async (args) => {
+exports.getExhibition = async (args) => {
   const config = new Config()
 
   //  Grab the elastic search config details
@@ -364,10 +365,10 @@ exports.getEvent = async (args) => {
   //  Set up the client
   const esclient = new elasticsearch.Client(elasticsearchConfig)
   const id = args.id
-  const index = 'events_wcma'
-  const type = 'event'
+  const index = 'exhibitions_wcma'
+  const type = 'exhibition'
 
-  const event = await esclient.get({
+  const exhibition = await esclient.get({
     index,
     type,
     id
@@ -375,14 +376,14 @@ exports.getEvent = async (args) => {
     console.error(err)
   })
 
-  if (event !== undefined && event !== null && 'found' in event && event.found === true) {
-    const newEvent = cleanEvent(event._source)
-    if (newEvent.objects.length > 0) {
-      args.ids = newEvent.objects
+  if (exhibition !== undefined && exhibition !== null && 'found' in exhibition && exhibition.found === true) {
+    const newExhibition = cleanExhibition(exhibition._source)
+    if (newExhibition.objects.length > 0) {
+      args.ids = newExhibition.objects
       const objects = await getItems(args, 'objects_wcma')
-      newEvent.objects = objects
+      newExhibition.objects = objects
     }
-    return newEvent
+    return newExhibition
   }
   return null
 }
@@ -442,7 +443,7 @@ exports.getObject = async (args) => {
   if (object !== undefined && object !== null && 'found' in object && object.found === true) {
     const newObject = cleanObjectColor(object._source)
 
-    //  Now we need to find all the events that this object lives in
+    //  Now we need to find all the exhibitions that this object lives in
     const body = {
       query: {
         query_string: {
@@ -451,14 +452,14 @@ exports.getObject = async (args) => {
         }
       }
     }
-    const events = await esclient.search({
-      index: 'events_wcma',
+    const exhibitions = await esclient.search({
+      index: 'exhibitions_wcma',
       body
     }).catch((err) => {
       console.error(err)
     })
-    newObject.events = events.hits.hits.map((hit) => hit._source).map((record) => {
-      return cleanEvent(record)
+    newObject.exhibitions = exhibitions.hits.hits.map((hit) => hit._source).map((record) => {
+      return cleanExhibition(record)
     })
     return newObject
   }
