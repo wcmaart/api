@@ -129,6 +129,7 @@ const getItems = async (args, index) => {
       ('maker' in args && args.maker !== '') ||
       ('period' in args && args.period !== '') ||
       ('title' in args && args.title !== '') ||
+      ('keyword' in args && args.keyword !== '') ||
       ('medium' in args && args.medium !== '') ||
       ('color' in args && args.color !== '') ||
       ('ids' in args && Array.isArray(args.ids))
@@ -165,6 +166,17 @@ const getItems = async (args, index) => {
         must.push({
           match: {
             medium: args.medium
+          }
+        })
+      }
+
+      if ('keyword' in args && args.keyword !== '') {
+        must.push({
+          multi_match: {
+            query: args.keyword,
+            type: 'best_fields',
+            fields: ['title', 'maker', 'description', 'credit_line', 'inscription', 'copyright_holder'],
+            operator: 'or'
           }
         })
       }
@@ -295,6 +307,161 @@ const cleanExhibition = (exhibition) => {
   return newExhibition
 }
 
+exports.getEvents = async (args) => {
+  const config = new Config()
+
+  //  Grab the elastic search config details
+  const elasticsearchConfig = config.get('elasticsearch')
+  if (elasticsearchConfig === null) {
+    return []
+  }
+
+  //  Set up the client
+  const esclient = new elasticsearch.Client(elasticsearchConfig)
+  const page = getPage(args)
+  const perPage = getPerPage(args)
+  const body = {
+    from: page * perPage,
+    size: perPage
+  }
+
+  //  Check to see if we have been passed valid sort fields values, if we have
+  //  then use that for a sort. Otherwise use a default one
+  const validFields = ['eventname', 'eventid', 'subject', 'coursenbr']
+  const keywordFields = ['eventName', 'subject']
+  const validSorts = ['asc', 'desc']
+  if ('sort_field' in args && validFields.includes(args.sort_field.toLowerCase()) && 'sort' in args && (validSorts.includes(args.sort.toLowerCase()))) {
+    //  To actually sort on a eventName we need to really sort on `eventName.keyword`
+    let sortField = args.sort_field
+    if (keywordFields.includes(sortField)) sortField = `${sortField}.keyword`
+
+    const sortObj = {}
+    sortObj[sortField] = {
+      order: args.sort
+    }
+    body.sort = [sortObj]
+  } else {
+    body.sort = [{
+      eventId: {
+        order: 'asc'
+      }
+    }]
+  }
+
+  if (
+    ('eventName' in args && args.eventName !== '') ||
+    ('subject' in args && args.subject !== '') ||
+    ('courseNbr' in args && args.courseNbr !== '') ||
+    ('description' in args && args.description !== '') ||
+    ('facultyMember' in args && args.facultyMember !== '') ||
+    ('objectID' in args && args.objectID !== '')
+  ) {
+    const must = []
+
+    //  Sigh, very bad way to add filters
+    //  NOTE: This doesn't combine filters
+    if ('eventName' in args && args.eventName !== '') {
+      must.push({
+        match: {
+          eventName: args.eventName
+        }
+      })
+    }
+
+    if ('subject' in args && args.subject !== '') {
+      must.push({
+        match: {
+          subject: args.subject
+        }
+      })
+    }
+
+    if ('courseNbr' in args && args.courseNbr !== '') {
+      must.push({
+        match: {
+          courseNbr: args.courseNbr
+        }
+      })
+    }
+
+    if ('description' in args && args.description !== '') {
+      must.push({
+        match: {
+          description: args.description
+        }
+      })
+    }
+
+    if ('facultyMember' in args && args.facultyMember !== '') {
+      must.push({
+        match: {
+          facultyMember: args.facultyMember
+        }
+      })
+    }
+
+    if ('objectID' in args && args.objectID !== '') {
+      must.push({
+        match: {
+          objectID: args.objectID
+        }
+      })
+    }
+
+    body.query = {
+      bool: {
+        must
+      }
+    }
+  }
+
+  const events = await esclient.search({
+    index: 'events_wcma',
+    body
+  }).catch((err) => {
+    console.error(err)
+  })
+  const records = events.hits.hits.map((hit) => hit._source).map((record) => {
+    return record
+  })
+  return records
+}
+
+exports.getEvent = async (args) => {
+  const config = new Config()
+
+  //  Grab the elastic search config details
+  const elasticsearchConfig = config.get('elasticsearch')
+  if (elasticsearchConfig === null) {
+    return []
+  }
+
+  //  Set up the client
+  const esclient = new elasticsearch.Client(elasticsearchConfig)
+  const id = args.id
+  const index = 'events_wcma'
+  const type = 'event'
+
+  const event = await esclient.get({
+    index,
+    type,
+    id: id
+  }).catch((err) => {
+    console.error(err)
+  })
+
+  if (event !== undefined && event !== null && 'found' in event && event.found === true) {
+    const newEvent = event._source
+    if (!isNaN(newEvent.objectID)) {
+      newEvent.object = await getObject({
+        id: newEvent.objectID
+      })
+    }
+    return newEvent
+  }
+  return null
+}
+
 exports.getExhibitions = async (args) => {
   const config = new Config()
 
@@ -413,7 +580,7 @@ exports.getMediums = async (args) => {
   return records
 }
 
-exports.getObject = async (args) => {
+const getObject = async (args) => {
   const config = new Config()
 
   //  Grab the elastic search config details
@@ -465,3 +632,4 @@ exports.getObject = async (args) => {
   }
   return null
 }
+exports.getObject = getObject
