@@ -137,11 +137,11 @@ const root = {
   mediums: (args) => {
     return queries.getMediums(args)
   },
-  events: (args) => {
-    return queries.getEvents(args)
+  exhibitions: (args) => {
+    return queries.getExhibitions(args)
   },
-  event: (args) => {
-    return queries.getEvent(args)
+  exhibition: (args) => {
+    return queries.getExhibition(args)
   }
 }
 
