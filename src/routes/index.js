@@ -142,6 +142,9 @@ const root = {
   },
   exhibition: (args) => {
     return queries.getExhibition(args)
+  },
+  events: (args) => {
+    return queries.getEvents(args)
   }
 }
 

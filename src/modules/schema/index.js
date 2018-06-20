@@ -36,6 +36,19 @@ type Query {
     color_threshold: Float = 50.0
     color_source: String = "google"
   ): SingleExhibition
+  events(
+    page: Int
+    per_page: Int
+    sort: String = "asc"
+    sort_field: String = "eventId"
+    eventName: String
+    subject: String
+    courseNbr: String
+    description: String
+    facultyMember: String
+    objectId: Int
+  ): [Event]
+  event(id: Int!): Event
 }
 
 type Sort {
@@ -216,4 +229,21 @@ type SingleExhibition {
   keyImage: Remote
 }
 
+type Event {
+  eventId: Int
+  eventName: String
+  facultyMember: String
+  subjectAndCourse: String
+  subject: String
+  courseNbr: Int
+  institution: String
+  description: String
+  startDate: String
+  startYear: Int
+  startMonth: Int
+  startDay: Int
+  dayOfTheWeek: String
+  objectID: Int
+  keyImage: Remote
+}
 `

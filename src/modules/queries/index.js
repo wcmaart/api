@@ -295,6 +295,126 @@ const cleanExhibition = (exhibition) => {
   return newExhibition
 }
 
+exports.getEvents = async (args) => {
+  const config = new Config()
+
+  //  Grab the elastic search config details
+  const elasticsearchConfig = config.get('elasticsearch')
+  if (elasticsearchConfig === null) {
+    return []
+  }
+
+  //  Set up the client
+  const esclient = new elasticsearch.Client(elasticsearchConfig)
+  const page = getPage(args)
+  const perPage = getPerPage(args)
+  const body = {
+    from: page * perPage,
+    size: perPage
+  }
+
+  //  Check to see if we have been passed valid sort fields values, if we have
+  //  then use that for a sort. Otherwise use a default one
+  const validFields = ['eventname', 'eventid', 'subject', 'coursenbr']
+  const keywordFields = ['eventName', 'subject']
+  const validSorts = ['asc', 'desc']
+  if ('sort_field' in args && validFields.includes(args.sort_field.toLowerCase()) && 'sort' in args && (validSorts.includes(args.sort.toLowerCase()))) {
+    //  To actually sort on a eventName we need to really sort on `eventName.keyword`
+    let sortField = args.sort_field
+    if (keywordFields.includes(sortField)) sortField = `${sortField}.keyword`
+
+    const sortObj = {}
+    sortObj[sortField] = {
+      order: args.sort
+    }
+    body.sort = [sortObj]
+  } else {
+    body.sort = [{
+      eventId: {
+        order: 'asc'
+      }
+    }]
+  }
+
+  if (
+    ('eventName' in args && args.eventName !== '') ||
+    ('subject' in args && args.subject !== '') ||
+    ('courseNbr' in args && args.courseNbr !== '') ||
+    ('description' in args && args.description !== '') ||
+    ('facultyMember' in args && args.facultyMember !== '') ||
+    ('objectId' in args && args.objectId !== '')
+  ) {
+    const must = []
+
+    //  Sigh, very bad way to add filters
+    //  NOTE: This doesn't combine filters
+    if ('eventName' in args && args.eventName !== '') {
+      must.push({
+        match: {
+          eventName: args.eventName
+        }
+      })
+    }
+
+    if ('subject' in args && args.subject !== '') {
+      must.push({
+        match: {
+          subject: args.subject
+        }
+      })
+    }
+
+    if ('courseNbr' in args && args.courseNbr !== '') {
+      must.push({
+        match: {
+          courseNbr: args.courseNbr
+        }
+      })
+    }
+
+    if ('description' in args && args.description !== '') {
+      must.push({
+        match: {
+          description: args.description
+        }
+      })
+    }
+
+    if ('facultyMember' in args && args.facultyMember !== '') {
+      must.push({
+        match: {
+          facultyMember: args.facultyMember
+        }
+      })
+    }
+
+    if ('objectId' in args && args.objectId !== '') {
+      must.push({
+        match: {
+          objectId: args.objectId
+        }
+      })
+    }
+
+    body.query = {
+      bool: {
+        must
+      }
+    }
+  }
+
+  const events = await esclient.search({
+    index: 'events_wcma',
+    body
+  }).catch((err) => {
+    console.error(err)
+  })
+  const records = events.hits.hits.map((hit) => hit._source).map((record) => {
+    return record
+  })
+  return records
+}
+
 exports.getExhibitions = async (args) => {
   const config = new Config()
 
