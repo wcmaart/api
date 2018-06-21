@@ -47,9 +47,22 @@ type Query {
     courseNbr: String
     description: String
     facultyMember: String
-    objectID: Int
   ): [Event]
-  event(id: Int!): Event
+  event(
+    id: Int!
+    page: Int
+    per_page: Int
+    sort: String = "asc"
+    sort_field: String = "id"
+    object_name: String
+    maker: String
+    period: String
+    medium: String
+    title: String
+    color: String
+    color_threshold: Float = 50.0
+    color_source: String = "google"
+  ): SingleEvent
 }
 
 type Sort {
@@ -142,6 +155,7 @@ type SingleObject {
   remote: Remote
   color: ColorInfo
   exhibitions: [Exhibition]
+  events: [Event]
 }
 
 type Remote {
@@ -244,8 +258,26 @@ type Event {
   startMonth: Int
   startDay: Int
   dayOfTheWeek: String
-  objectID: Int
-  object: SingleObject
+  objects: [Int]
   keyImage: Remote
 }
+
+type SingleEvent {
+  eventId: Int
+  eventName: String
+  facultyMember: String
+  subjectAndCourse: String
+  subject: String
+  courseNbr: Int
+  institution: String
+  description: String
+  startDate: String
+  startYear: Int
+  startMonth: Int
+  startDay: Int
+  dayOfTheWeek: String
+  objects: [Object]
+  keyImage: Remote
+}
+
 `

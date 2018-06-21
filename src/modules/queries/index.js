@@ -457,6 +457,11 @@ exports.getEvent = async (args) => {
         id: newEvent.objectID
       })
     }
+    if (newEvent.objects.length > 0) {
+      args.ids = newEvent.objects
+      const objects = await getItems(args, 'objects_wcma')
+      newEvent.objects = objects
+    }
     return newEvent
   }
   return null
@@ -611,7 +616,7 @@ const getObject = async (args) => {
     const newObject = cleanObjectColor(object._source)
 
     //  Now we need to find all the exhibitions that this object lives in
-    const body = {
+    const exhibitionsBody = {
       query: {
         query_string: {
           fields: ['ExhObjXrefs'],
@@ -621,13 +626,33 @@ const getObject = async (args) => {
     }
     const exhibitions = await esclient.search({
       index: 'exhibitions_wcma',
-      body
+      body: exhibitionsBody
     }).catch((err) => {
       console.error(err)
     })
     newObject.exhibitions = exhibitions.hits.hits.map((hit) => hit._source).map((record) => {
       return cleanExhibition(record)
     })
+
+    //  Now we need to find all the events that this object lives in
+    const eventsBody = {
+      query: {
+        query_string: {
+          fields: ['objects'],
+          query: id
+        }
+      }
+    }
+    const events = await esclient.search({
+      index: 'events_wcma',
+      body: eventsBody
+    }).catch((err) => {
+      console.error(err)
+    })
+    newObject.events = events.hits.hits.map((hit) => hit._source).map((record) => {
+      return record
+    })
+
     return newObject
   }
   return null
