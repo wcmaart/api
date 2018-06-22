@@ -354,6 +354,7 @@ exports.getEvents = async (args) => {
     ('courseNbr' in args && args.courseNbr !== '') ||
     ('description' in args && args.description !== '') ||
     ('facultyMember' in args && args.facultyMember !== '') ||
+    ('eventType' in args && args.eventType !== '') ||
     ('objectID' in args && args.objectID !== '')
   ) {
     const must = []
@@ -396,6 +397,14 @@ exports.getEvents = async (args) => {
       must.push({
         match: {
           facultyMember: args.facultyMember
+        }
+      })
+    }
+
+    if ('eventType' in args && args.eventType !== '') {
+      must.push({
+        match: {
+          eventType: args.eventType
         }
       })
     }
@@ -452,11 +461,7 @@ exports.getEvent = async (args) => {
 
   if (event !== undefined && event !== null && 'found' in event && event.found === true) {
     const newEvent = event._source
-    if (!isNaN(newEvent.objectID)) {
-      newEvent.object = await getObject({
-        id: newEvent.objectID
-      })
-    }
+
     if (newEvent.objects.length > 0) {
       args.ids = newEvent.objects
       const objects = await getItems(args, 'objects_wcma')

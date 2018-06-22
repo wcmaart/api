@@ -47,6 +47,7 @@ type Query {
     courseNbr: String
     description: String
     facultyMember: String
+    eventType: String
   ): [Event]
   event(
     id: Int!
@@ -258,6 +259,7 @@ type Event {
   startMonth: Int
   startDay: Int
   dayOfTheWeek: String
+  eventType: String
   objects: [Int]
   keyImage: Remote
 }
@@ -276,6 +278,7 @@ type SingleEvent {
   startMonth: Int
   startDay: Int
   dayOfTheWeek: String
+  eventType: String
   objects: [Object]
   keyImage: Remote
 }
