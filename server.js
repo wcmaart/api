@@ -64,6 +64,11 @@ const argOptionDefinitions = [{
   defaultOption: false
 },
 {
+  name: 'buildOnly',
+  alias: 'b',
+  type: Boolean
+},
+{
   name: 'skipOpen',
   type: Boolean
 }
@@ -95,6 +100,12 @@ let skipBuild = false
 global.doRestart = false
 if ('skipBuild' in argOptions && argOptions.skipBuild === true) {
   skipBuild = true
+}
+
+let buildOnly = false
+if ('buildOnly' in argOptions && argOptions.buildOnly === true) {
+  buildOnly = true
+  skipBuild = false
 }
 
 /*
@@ -259,8 +270,10 @@ if (skipBuild === false) {
  *
  */
 if (process.env.NODE_ENV === 'development') {
-  const devtools = require('./app/modules/devtools')
-  devtools.watcher()
+  if (buildOnly === false) {
+    const devtools = require('./app/modules/devtools')
+    devtools.watcher()
+  }
 }
 
 // ########################################################################
@@ -431,9 +444,14 @@ if (process.env.NODE_ENV === 'development') {
   }
 }
 
-http.createServer(app).listen(process.env.PORT)
+if (buildOnly === false) {
+  http.createServer(app).listen(process.env.PORT)
 
-//  Now we kick off the regular tasks that do things periodically
-//  kinda like cron jobs
-const pingtools = require('./app/modules/pingtools')
-pingtools.startPingingES()
+  //  Now we kick off the regular tasks that do things periodically
+  //  kinda like cron jobs
+  const pingtools = require('./app/modules/pingtools')
+  pingtools.startPingingES()
+} else {
+  console.log('All built')
+  process.exit()
+}
