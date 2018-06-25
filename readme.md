@@ -28,7 +28,7 @@ This is where the GraphQL fits into the overall architecture of the system, see 
 
 # Installation
 
-Below you will find all the notes you need to get up and running with the graphQL endpoint, _note_ this has been tested on OSX and ubuntu, as for Windows ¯\_(ツ)_/¯
+Below you will find all the notes you need to get up and running with the graphQL endpoint, _note_ this has been tested on OSX and ubuntu, as for Windows ¯\\_(ツ)_/¯
 
 ### Prerequisites
 
@@ -38,7 +38,7 @@ Before anything else you will need to make sure you have installed the following
 + [Yarn](https://yarnpkg.com/en/docs/install)
 + Some flavour of git (obviously)
 
-The clone the repository and read the next section before doing anything else.
+Then clone the repository and read the next section before doing anything else.
 
 You will also need to have installed 
 
@@ -46,7 +46,7 @@ You will also need to have installed
 + Set up and imported data with [The Dashbaord](https://github.com/wcmaart/dashboard)
 + Signed up to [Auth0](https://auth0.com)
 
-...I advice setting up a "developer" and "production" version of each of the above, unless you intend on running _just_ a developer version or _just_ a production version. And hey, staging too if you wish.
+...I advise setting up a "developer" and "production" version of each of the above, unless you intend on running _just_ a developer version or _just_ a production version. And hey, staging too if you wish.
 
 This should set up ElasticSearch and Kibana for your local developerment...
 
@@ -75,7 +75,7 @@ The code has been written so that running `yarn start` will install all the node
 There are a couple of useful command line parameters you can use...
 
 `--skipOpen` will start the app _without_ trying to open a browser.  
-`--skipBuild` will start the app _without_ running a `yarn install` or rebuilding any of the node or css files.
+`--skipBuild` will start the app _without_ running a `yarn install` or rebuilding any of the node or css files.  
 `--buildOnly` will make it so the app and any code watching doesn't start. Use this when you just want to rebuild the code but not actually start anything, will override `--skipBuild`.
 
 After your first `yarn start` you should read [Running for the first time in development](#running-for-the-first-time-in-development)
