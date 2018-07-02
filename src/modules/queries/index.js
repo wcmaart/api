@@ -355,7 +355,8 @@ exports.getEvents = async (args) => {
     ('description' in args && args.description !== '') ||
     ('facultyMember' in args && args.facultyMember !== '') ||
     ('eventType' in args && args.eventType !== '') ||
-    ('objectID' in args && args.objectID !== '')
+    ('objectID' in args && args.objectID !== '') ||
+    ('keyword' in args && args.keyword !== '')
   ) {
     const must = []
 
@@ -413,6 +414,17 @@ exports.getEvents = async (args) => {
       must.push({
         match: {
           objectID: args.objectID
+        }
+      })
+    }
+
+    if ('keyword' in args && args.keyword !== '') {
+      must.push({
+        multi_match: {
+          query: args.keyword,
+          type: 'best_fields',
+          fields: ['eventName', 'subject', 'description', 'facultyMember', 'eventType'],
+          operator: 'or'
         }
       })
     }
@@ -515,6 +527,58 @@ exports.getExhibitions = async (args) => {
         order: 'asc'
       }
     }]
+  }
+
+  if (
+    ('title' in args && args.title !== '') ||
+    ('planningNotes' in args && args.planningNotes !== '') ||
+    ('curNotes' in args && args.curNotes !== '') ||
+    ('keyword' in args && args.keyword !== '')
+  ) {
+    const must = []
+
+    //  Sigh, very bad way to add filters
+    //  NOTE: This doesn't combine filters
+    if ('title' in args && args.title !== '') {
+      must.push({
+        match: {
+          ExhTitle: args.title
+        }
+      })
+    }
+
+    if ('planningNotes' in args && args.planningNotes !== '') {
+      must.push({
+        match: {
+          PlanningNotes: args.planningNotes
+        }
+      })
+    }
+
+    if ('curNotes' in args && args.curNotes !== '') {
+      must.push({
+        match: {
+          CurNotes: args.curNotes
+        }
+      })
+    }
+
+    if ('keyword' in args && args.keyword !== '') {
+      must.push({
+        multi_match: {
+          query: args.keyword,
+          type: 'best_fields',
+          fields: ['ExhTitle', 'PlanningNotes', 'CurNotes'],
+          operator: 'or'
+        }
+      })
+    }
+
+    body.query = {
+      bool: {
+        must
+      }
+    }
   }
 
   const exhibitions = await esclient.search({

@@ -21,7 +21,16 @@ type Query {
   makers(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Maker]
   periods(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Period]
   mediums(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Medium]
-  exhibitions(page: Int, per_page: Int, sort: String = "asc", sort_field: String = "id"): [Exhibition]
+  exhibitions(
+    page: Int
+    per_page: Int
+    sort: String = "asc"
+    sort_field: String = "id"
+    title: String
+    planningNotes: String
+    curNotes: String
+    keyword: String
+  ): [Exhibition]
   exhibition(
     id: Int!
     page: Int
@@ -33,6 +42,7 @@ type Query {
     period: String
     medium: String
     title: String
+    keyword: String
     color: String
     color_threshold: Float = 50.0
     color_source: String = "google"
@@ -48,6 +58,7 @@ type Query {
     description: String
     facultyMember: String
     eventType: String
+    keyword: String
   ): [Event]
   event(
     id: Int!
@@ -60,6 +71,7 @@ type Query {
     period: String
     medium: String
     title: String
+    keyword: String
     color: String
     color_threshold: Float = 50.0
     color_source: String = "google"
