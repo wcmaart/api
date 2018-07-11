@@ -35,6 +35,10 @@ router.options('/*', function (req, res, next) {
 router.use(cors({
   origin: coorsAllowedOrigin
 }))
+
+//  Redirect to https, make sure...
+//  app.enable('trust proxy')
+//  is set in server.js
 router.use(function (req, res, next) {
   if (!(req.secure) && process.env.REDIRECT_HTTPS === 'true') {
     var secureUrl = 'https://' + req.headers['host'] + req.url
