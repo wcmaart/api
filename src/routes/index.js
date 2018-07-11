@@ -37,7 +37,7 @@ router.use(cors({
 }))
 
 router.use(function (req, res, next) {
-  if (process.env.REDIRECT_HTTPS === true) {
+  if (process.env.REDIRECT_HTTPS === 'true') {
     var secureUrl = 'https://' + req.headers['host'] + req.url
     res.writeHead(301, {
       Location: secureUrl
