@@ -35,14 +35,19 @@ router.options('/*', function (req, res, next) {
 router.use(cors({
   origin: coorsAllowedOrigin
 }))
-
 router.use(function (req, res, next) {
+  console.log('req.secure: ', req.secure)
+  console.log('req.protocol: ', req.protocol)
   if (process.env.REDIRECT_HTTPS === 'true') {
     var secureUrl = 'https://' + req.headers['host'] + req.url
+    console.log(secureUrl)
+    next()
+    /*
     res.writeHead(301, {
       Location: secureUrl
     })
     res.end()
+    */
   } else {
     next()
   }
