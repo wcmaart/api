@@ -36,9 +36,7 @@ router.use(cors({
   origin: coorsAllowedOrigin
 }))
 router.use(function (req, res, next) {
-  console.log('req.secure: ', req.secure)
-  console.log('req.protocol: ', req.protocol)
-  if (process.env.REDIRECT_HTTPS === 'true') {
+  if (!(req.secure) && process.env.REDIRECT_HTTPS === 'true') {
     var secureUrl = 'https://' + req.headers['host'] + req.url
     console.log(secureUrl)
     next()
