@@ -269,6 +269,8 @@ const getItems = async (args, index) => {
     console.error(err)
   })
 
+  let total = null
+  if (objects.hits.total) total = objects.hits.total
   const records = objects.hits.hits.map((hit) => hit._source).map((record) => {
     //  Because of the way ES returns the items as an array of single arrays
     //  we are popping them out into a single array, i.e.
@@ -283,6 +285,21 @@ const getItems = async (args, index) => {
     }
     return record
   })
+
+  //  Finally, add the pagination information
+  const sys = {
+    pagination: {
+      page,
+      perPage,
+      total
+    }
+  }
+  if (total !== null) {
+    sys.pagination.maxPage = Math.ceil(total / perPage) - 1
+  }
+  if (records.length > 0) {
+    records[0]._sys = sys
+  }
 
   return records.map((record) => cleanObjectColor(record))
 }
@@ -442,9 +459,25 @@ exports.getEvents = async (args) => {
   }).catch((err) => {
     console.error(err)
   })
+  let total = null
+  if (events.hits.total) total = events.hits.total
   const records = events.hits.hits.map((hit) => hit._source).map((record) => {
     return record
   })
+  //  Finally, add the pagination information
+  const sys = {
+    pagination: {
+      page,
+      perPage,
+      total
+    }
+  }
+  if (total !== null) {
+    sys.pagination.maxPage = Math.ceil(total / perPage) - 1
+  }
+  if (records.length > 0) {
+    records[0]._sys = sys
+  }
   return records
 }
 
@@ -588,9 +621,25 @@ exports.getExhibitions = async (args) => {
     console.error(err)
   })
 
+  let total = null
+  if (exhibitions.hits.total) total = exhibitions.hits.total
   const records = exhibitions.hits.hits.map((hit) => hit._source).map((record) => {
     return cleanExhibition(record)
   })
+  //  Finally, add the pagination information
+  const sys = {
+    pagination: {
+      page,
+      perPage,
+      total
+    }
+  }
+  if (total !== null) {
+    sys.pagination.maxPage = Math.ceil(total / perPage) - 1
+  }
+  if (records.length > 0) {
+    records[0]._sys = sys
+  }
   return records
 }
 

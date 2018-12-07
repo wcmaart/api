@@ -124,6 +124,7 @@ type Object {
   copyright_holder: String
   remote: Remote
   color: ColorInfo
+  _sys: Sys
 }
 
 type SingleObject {
@@ -203,6 +204,7 @@ type ObjectName {
   count: Int
   images: [Remote]
   keyImage: Remote
+  _sys: Sys
 }
 
 type Maker {
@@ -211,6 +213,7 @@ type Maker {
   count: Int
   images: [Remote]
   keyImage: Remote
+  _sys: Sys
 }
 
 type Period {
@@ -219,6 +222,7 @@ type Period {
   count: Int
   images: [Remote]
   keyImage: Remote
+  _sys: Sys
 }
 
 type Medium {
@@ -227,6 +231,7 @@ type Medium {
   count: Int
   images: [Remote]
   keyImage: Remote
+  _sys: Sys
 }
 
 type Exhibition {
@@ -241,6 +246,7 @@ type Exhibition {
   endISODate: String
   endDate: Int
   keyImage: Remote
+  _sys: Sys
 }
 
 type SingleExhibition {
@@ -274,6 +280,7 @@ type Event {
   eventType: String
   objects: [Int]
   keyImage: Remote
+  _sys: Sys
 }
 
 type SingleEvent {
@@ -295,4 +302,14 @@ type SingleEvent {
   keyImage: Remote
 }
 
+type Sys {
+  pagination: Pagination
+}
+
+type Pagination {
+  page: Int
+  perPage: Int
+  total: Int
+  maxPage: Int
+}
 `
